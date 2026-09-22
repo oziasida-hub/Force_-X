@@ -1,5 +1,5 @@
-
 from flask import Flask, request, jsonify, Response
+from flask_cors import CORS
 from ultralytics import YOLO
 from datetime import datetime
 from base64 import b64decode
@@ -36,7 +36,7 @@ object_info = {
 }
 
 app = Flask(__name__)
-
+CORS(app, origins=["https://force-x.onrender.com"])
 HTML = r"""
 <!DOCTYPE html>
 <html lang="en">
@@ -594,11 +594,7 @@ function captureImage() {
     status.innerText =
         "🧠 Snow AI is analyzing...";
 
-    fetch("/detect", {
-
-        method: "POST",
-
-        headers: {
+    fetch("https://force-x-backend.onrender.com/detect", {{
             "Content-Type":
                 "application/json"
         },
