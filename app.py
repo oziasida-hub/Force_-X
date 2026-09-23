@@ -613,17 +613,7 @@ function captureImage() {
         timestamp: timestamp,
         duration: duration
     })
-})
-
-        body: JSON.stringify({
-
-            image: imageData,
-            timestamp: timestamp,
-            duration: duration
-
-        })
-
-    })
+   })
 
     .then(response => {
 
