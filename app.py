@@ -84,10 +84,16 @@ nav {
     top: 0;
     z-index: 10;
 }
+logo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
 
-.logo {
-    font-size: 22px;
-    font-weight: bold;
+.force-x-logo {
+    width: 100px;
+    height: auto;
+    display: block;
 }
 
 .nav-links {
@@ -265,8 +271,11 @@ h2 {
 <nav>
 
 <div class="logo">
-Force X
+    <img src="file_0000000074d482118627681d3d6c1bfd.png"
+         alt="Force X"
+         class="force-x-logo">
 </div>
+
 
 <div class="nav-links">
 
