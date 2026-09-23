@@ -603,6 +603,8 @@ function captureImage() {
     status.innerText =
         "🧠 Snow AI is analyzing...";
 
+        status.innerText = "🔗 Connecting to Snow AI...";
+
     fetch("https://force-x-backend.onrender.com/detect", {
     method: "POST",
     headers: {
