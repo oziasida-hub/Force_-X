@@ -84,7 +84,7 @@ nav {
     top: 0;
     z-index: 10;
 }
-logo {
+.logo {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -603,10 +603,17 @@ function captureImage() {
     status.innerText =
         "🧠 Snow AI is analyzing...";
 
-    fetch("https://force-x-backend.onrender.com/detect", {{
-            "Content-Type":
-                "application/json"
-        },
+    fetch("https://force-x-backend.onrender.com/detect", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        image: imageData,
+        timestamp: timestamp,
+        duration: duration
+    })
+})
 
         body: JSON.stringify({
 
