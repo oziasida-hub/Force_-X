@@ -1,13 +1,11 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
 from ultralytics import YOLO
 from datetime import datetime
 from base64 import b64decode
 import numpy as np
 import cv2
-import threading
 import urllib.parse
-import time
 
 model = YOLO("yolo11n.pt")
 
@@ -36,7 +34,15 @@ object_info = {
 }
 
 app = Flask(__name__)
-CORS(app, origins=["https://force-x.onrender.com"])
+
+CORS(
+    app,
+    origins=[
+        "https://force-x.onrender.com",
+        "https://force-x-frontend.onrender.com"
+    ]
+)
+
 HTML = r"""
 <!DOCTYPE html>
 <html lang="en">
@@ -84,6 +90,7 @@ nav {
     top: 0;
     z-index: 10;
 }
+
 .logo {
     display: flex;
     align-items: center;
@@ -271,11 +278,11 @@ h2 {
 <nav>
 
 <div class="logo">
-    <img src="file_0000000074d482118627681d3d6c1bfd.png"
-         alt="Force X"
-         class="force-x-logo">
+    <img
+        src="/file_0000000074d482118627681d3d6c1bfd.png"
+        alt="Force X"
+        class="force-x-logo">
 </div>
-
 
 <div class="nav-links">
 
@@ -601,21 +608,19 @@ function captureImage() {
         new Date().toLocaleString();
 
     status.innerText =
-        "🧠 Snow AI is analyzing...";
-
-        status.innerText = "🔗 Connecting to Snow AI...";
+        "🔗 Connecting to Snow AI...";
 
     fetch("https://force-x-backend.onrender.com/detect", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        image: imageData,
-        timestamp: timestamp,
-        duration: duration
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            image: imageData,
+            timestamp: timestamp,
+            duration: duration
+        })
     })
-   })
 
     .then(response => {
 
@@ -792,7 +797,13 @@ function resetButtons() {
 </html>
 """
 
-app = Flask(__name__)
+@app.route("/file_0000000074d482118627681d3d6c1bfd.png")
+def force_x_logo():
+
+    return send_file(
+        "file_0000000074d482118627681d3d6c1bfd.png",
+        mimetype="image/png"
+    )
 
 @app.route("/detect", methods=["POST"])
 def detect():
@@ -801,12 +812,24 @@ def detect():
 
         data = request.get_json()
 
+        if not data:
+            return jsonify({
+                "success": False,
+                "error": "No data received"
+            }), 400
+
         image_data = data["image"]
-        timestamp = data["timestamp"]
-        duration = data["duration"]
+        timestamp = data.get(
+            "timestamp",
+            datetime.now().isoformat()
+        )
+        duration = data.get(
+            "duration",
+            "0"
+        )
 
         image_bytes = b64decode(
-            image_data.split(",")[1]
+            image_data.split(",", 1)[1]
         )
 
         frame = cv2.imdecode(
@@ -816,6 +839,12 @@ def detect():
             ),
             cv2.IMREAD_COLOR
         )
+
+        if frame is None:
+            return jsonify({
+                "success": False,
+                "error": "Invalid image"
+            }), 400
 
         results = model(frame)
 
@@ -843,8 +872,7 @@ def detect():
                 google_url = (
                     "https://www.google.com/search?q="
                     + urllib.parse.quote(
-                        object_name +
-                        " information"
+                        object_name + " information"
                     )
                 )
 
@@ -888,7 +916,6 @@ def detect():
 
         }), 500
 
-
 @app.route("/")
 def home():
 
@@ -896,10 +923,17 @@ def home():
         HTML,
         mimetype="text/html"
     )
+
 if __name__ == "__main__":
+
     import os
 
     app.run(
         host="0.0.0.0",
-        port=int(os.environ.get("PORT", 5000))
-    )
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        )
+)
