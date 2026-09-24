@@ -170,20 +170,6 @@ nav {
     padding: 65px 10px;
 }
 
-.logo-large {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.logo-large img {
-    width: 190px;
-    max-width: 75%;
-    height: auto;
-    object-fit: contain;
-}
-
 h1 {
     font-size: clamp(44px, 10vw, 76px);
     margin: 10px 0;
@@ -355,10 +341,6 @@ h2 {
         padding: 45px 5px;
     }
 
-    .logo-large img {
-        width: 150px;
-    }
-
 }
 
 </style>
@@ -409,14 +391,6 @@ HOME
 <div class="content">
 
 <div class="hero">
-
-<div class="logo-large">
-
-<img
-    src="https://force-x.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
-    alt="Force X Logo">
-
-</div>
 
 <h1>
 Force X
