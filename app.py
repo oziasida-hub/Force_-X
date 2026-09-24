@@ -46,12 +46,19 @@ CORS(
 HTML = r"""
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
 <title>Force X</title>
+
+<link rel="icon"
+      type="image/png"
+      href="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png">
 
 <style>
 
@@ -59,7 +66,8 @@ HTML = r"""
     box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -80,12 +88,17 @@ body {
 
 nav {
     width: 100%;
-    padding: 16px 20px;
+    padding: 12px 20px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     background: rgba(7,17,31,0.92);
-    border-bottom: 1px solid rgba(255,255,255,0.12);
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.12);
+
     position: sticky;
     top: 0;
     z-index: 10;
@@ -98,8 +111,9 @@ nav {
 }
 
 .force-x-logo {
-    width: 100px;
-    height: auto;
+    width: 55px;
+    height: 55px;
+    object-fit: contain;
     display: block;
 }
 
@@ -121,7 +135,9 @@ nav {
 .page {
     width: 100%;
     min-height: calc(100vh - 70px);
+
     display: none;
+
     padding: 50px 20px;
 }
 
@@ -156,21 +172,34 @@ h1 {
 
 .card {
     background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
+
+    border:
+        1px solid rgba(255,255,255,0.12);
+
     border-radius: 24px;
+
     padding: 25px;
+
     margin-top: 25px;
 }
 
 button {
     border: none;
+
     border-radius: 15px;
+
     padding: 16px 25px;
+
     font-size: 17px;
+
     font-weight: bold;
+
     cursor: pointer;
+
     background: white;
+
     color: #12365c;
+
     margin: 5px;
 }
 
@@ -194,55 +223,81 @@ h2 {
 
 #camera {
     width: 100%;
+
     max-height: 500px;
+
     object-fit: cover;
+
     display: none;
+
     margin-top: 20px;
+
     border-radius: 20px;
+
     background: black;
 }
 
 #preview {
     width: 100%;
+
     display: none;
+
     margin-top: 20px;
+
     border-radius: 20px;
 }
 
 .status {
     font-size: 18px;
+
     font-weight: bold;
+
     margin-top: 20px;
 }
 
 .report {
     background: rgba(0,0,0,0.25);
+
     border-radius: 18px;
+
     padding: 20px;
+
     margin-top: 15px;
+
     line-height: 1.7;
 }
 
 .detection {
     background: rgba(255,255,255,0.07);
+
     border-radius: 15px;
+
     padding: 15px;
+
     margin-top: 12px;
 }
 
 .confidence {
     font-weight: bold;
+
     color: #8ab4f8;
 }
 
 .search {
     display: inline-block;
+
     margin-top: 10px;
+
     padding: 10px 15px;
+
     border-radius: 12px;
+
     background: #8ab4f8;
+
     color: #111;
+
     text-decoration: none;
+
     font-weight: bold;
 }
 
@@ -253,9 +308,21 @@ h2 {
         gap: 12px;
     }
 
+    .logo {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .force-x-logo {
+        width: 50px;
+        height: 50px;
+    }
+
     .nav-links {
         width: 100%;
+
         justify-content: space-between;
+
         gap: 8px;
     }
 
@@ -278,27 +345,33 @@ h2 {
 <nav>
 
 <div class="logo">
+
     <img
-        src="/file_0000000074d482118627681d3d6c1bfd.png"
+        src="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
         alt="Force X"
         class="force-x-logo">
+
 </div>
 
 <div class="nav-links">
 
-<a href="#" onclick="showPage('home')">
+<a href="#"
+   onclick="showPage('home')">
 HOME
 </a>
 
-<a href="#" onclick="showPage('detection')">
+<a href="#"
+   onclick="showPage('detection')">
 📷 DETECTION
 </a>
 
-<a href="#" onclick="showPage('reports')">
+<a href="#"
+   onclick="showPage('reports')">
 📊 REPORTS
 </a>
 
-<a href="#" onclick="showPage('about')">
+<a href="#"
+   onclick="showPage('about')">
 ℹ️ ABOUT
 </a>
 
@@ -306,7 +379,8 @@ HOME
 
 </nav>
 
-<section id="home" class="page active">
+<section id="home"
+         class="page active">
 
 <div class="content">
 
@@ -327,14 +401,18 @@ Intelligent Detection System
 <div class="card">
 
 <p class="info">
+
 Welcome to Force X — a detection
 system powered by Snow AI,
 designed to identify objects and
 animals using artificial intelligence.
+
 </p>
 
 <button onclick="showPage('detection')">
+
 📷 START SCAN
+
 </button>
 
 </div>
@@ -345,7 +423,8 @@ animals using artificial intelligence.
 
 </section>
 
-<section id="detection" class="page">
+<section id="detection"
+         class="page">
 
 <div class="content">
 
@@ -356,18 +435,24 @@ animals using artificial intelligence.
 <div class="card">
 
 <p class="info">
+
 Start a five-second Snow AI scan.
+
 </p>
 
 <button id="startButton"
         onclick="startScan()">
+
 📷 START SCAN
+
 </button>
 
 <button id="stopButton"
         onclick="stopScan()"
         disabled>
+
 ⛔ STOP
+
 </button>
 
 <video id="camera"
@@ -383,7 +468,9 @@ Start a five-second Snow AI scan.
 
 <p id="scanStatus"
    class="status">
+
 🟢 Ready to scan
+
 </p>
 
 </div>
@@ -392,7 +479,8 @@ Start a five-second Snow AI scan.
 
 </section>
 
-<section id="reports" class="page">
+<section id="reports"
+         class="page">
 
 <div class="content">
 
@@ -404,7 +492,9 @@ Start a five-second Snow AI scan.
 
 <div id="reportText"
      class="info">
+
 No detection reports yet.
+
 </div>
 
 </div>
@@ -413,7 +503,8 @@ No detection reports yet.
 
 </section>
 
-<section id="about" class="page">
+<section id="about"
+         class="page">
 
 <div class="content">
 
@@ -424,6 +515,7 @@ No detection reports yet.
 <div class="card">
 
 <p class="info">
+
 Force X is a computer-vision
 website powered by Snow AI.
 
@@ -432,6 +524,7 @@ sends it to the Snow AI YOLO
 detection model and returns
 detected objects, confidence
 levels and descriptions.
+
 </p>
 
 </div>
@@ -443,24 +536,31 @@ levels and descriptions.
 <script>
 
 let stream = null;
+
 let timer = null;
+
 let scanning = false;
+
 let startTime = 0;
+
 
 function showPage(page) {
 
     document
-    .querySelectorAll(".page")
-    .forEach(function(section) {
-        section.classList.remove("active");
-    });
+        .querySelectorAll(".page")
+        .forEach(function(section) {
+
+            section.classList.remove("active");
+
+        });
 
     document
-    .getElementById(page)
-    .classList.add("active");
+        .getElementById(page)
+        .classList.add("active");
 
     window.scrollTo(0,0);
 }
+
 
 async function startScan() {
 
@@ -481,6 +581,7 @@ async function startScan() {
         document.getElementById("stopButton");
 
     startButton.disabled = true;
+
     stopButton.disabled = false;
 
     status.innerText =
@@ -489,22 +590,27 @@ async function startScan() {
     try {
 
         stream =
-        await navigator.mediaDevices
-        .getUserMedia({
+            await navigator.mediaDevices
+                .getUserMedia({
 
-            video: {
-                facingMode: {
-                    ideal: "environment"
-                }
-            },
+                    video: {
 
-            audio: false
-        });
+                        facingMode: {
+                            ideal: "environment"
+                        }
+
+                    },
+
+                    audio: false
+
+                });
 
         camera.srcObject = stream;
+
         camera.style.display = "block";
 
         scanning = true;
+
         startTime = Date.now();
 
         let seconds = 5;
@@ -512,26 +618,31 @@ async function startScan() {
         status.innerText =
             "🟢 Scanning... 5 seconds";
 
-        timer = setInterval(function() {
+        timer =
+            setInterval(function() {
 
-            seconds--;
+                seconds--;
 
-            if (seconds > 0) {
+                if (seconds > 0) {
 
-                status.innerText =
-                    "🧠 Snow AI scanning... "
-                    + seconds
-                    + " seconds";
-            }
+                    status.innerText =
+                        "🧠 Snow AI scanning... "
+                        + seconds
+                        + " seconds";
 
-            if (seconds === 0) {
+                }
 
-                clearInterval(timer);
+                if (seconds === 0) {
 
-                captureImage();
-            }
+                    clearInterval(timer);
 
-        }, 1000);
+                    timer = null;
+
+                    captureImage();
+
+                }
+
+            }, 1000);
 
     }
 
@@ -543,8 +654,11 @@ async function startScan() {
         resetButtons();
 
         console.log(error);
+
     }
+
 }
+
 
 function captureImage() {
 
@@ -570,6 +684,7 @@ function captureImage() {
         resetButtons();
 
         return;
+
     }
 
     canvas.width =
@@ -596,6 +711,7 @@ function captureImage() {
         );
 
     preview.src = imageData;
+
     preview.style.display = "block";
 
     stopCamera();
@@ -610,17 +726,31 @@ function captureImage() {
     status.innerText =
         "🔗 Connecting to Snow AI...";
 
-    fetch("https://force-x-backend.onrender.com/detect", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            image: imageData,
-            timestamp: timestamp,
-            duration: duration
-        })
-    })
+    fetch(
+        "https://force-x-backend.onrender.com/detect",
+        {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type":
+                    "application/json"
+
+            },
+
+            body: JSON.stringify({
+
+                image: imageData,
+
+                timestamp: timestamp,
+
+                duration: duration
+
+            })
+
+        }
+    )
 
     .then(response => {
 
@@ -629,6 +759,7 @@ function captureImage() {
             throw new Error(
                 "Detection request failed"
             );
+
         }
 
         return response.json();
@@ -636,6 +767,15 @@ function captureImage() {
     })
 
     .then(data => {
+
+        if (!data.success) {
+
+            throw new Error(
+                data.error ||
+                "Snow AI returned an error."
+            );
+
+        }
 
         displayResults(data);
 
@@ -653,7 +793,9 @@ function captureImage() {
         resetButtons();
 
     });
+
 }
+
 
 function displayResults(data) {
 
@@ -682,15 +824,23 @@ function displayResults(data) {
 
         "<br><br>";
 
-    if (data.objects.length === 0) {
+    if (
+        !data.objects ||
+        data.objects.length === 0
+    ) {
 
         html +=
+
             "🔍 <strong>Detection:</strong><br>" +
+
             "No objects detected.";
 
-    } else {
+    }
+
+    else {
 
         html +=
+
             "🔍 <strong>Objects detected:</strong>";
 
         data.objects.forEach(function(object) {
@@ -700,43 +850,58 @@ function displayResults(data) {
                 "<div class='detection'>" +
 
                 "🔹 <strong>" +
+
                 object.name +
+
                 "</strong><br>" +
 
                 "🎯 Confidence: " +
 
                 "<span class='confidence'>" +
+
                 object.confidence +
+
                 "</span><br>" +
 
                 "📚 " +
+
                 object.description +
 
                 "<br>" +
 
                 "<a class='search' " +
+
                 "href='" +
+
                 object.google_url +
-                "' target='_blank'>" +
+
+                "' " +
+
+                "target='_blank'>" +
 
                 "🔎 Search Google" +
 
                 "</a>" +
 
                 "</div>";
+
         });
+
     }
 
     html += "</div>";
 
-    document.getElementById("reportText")
+    document
+        .getElementById("reportText")
         .innerHTML = html;
 
     status.innerText =
         "🟢 Snow AI scan complete";
 
     showPage("reports");
+
 }
+
 
 function stopScan() {
 
@@ -745,59 +910,74 @@ function stopScan() {
         clearInterval(timer);
 
         timer = null;
+
     }
 
     stopCamera();
 
     resetButtons();
 
-    document.getElementById("scanStatus")
+    document
+        .getElementById("scanStatus")
         .innerText =
         "🟢 Ready to scan";
+
 }
+
 
 function stopCamera() {
 
     if (stream) {
 
         stream
-        .getTracks()
-        .forEach(function(track) {
+            .getTracks()
+            .forEach(function(track) {
 
-            track.stop();
+                track.stop();
 
-        });
+            });
 
         stream = null;
+
     }
 
     const camera =
         document.getElementById("camera");
 
     camera.srcObject = null;
+
     camera.style.display = "none";
 
     scanning = false;
+
 }
+
 
 function resetButtons() {
 
-    document.getElementById("startButton")
+    document
+        .getElementById("startButton")
         .disabled = false;
 
-    document.getElementById("stopButton")
+    document
+        .getElementById("stopButton")
         .disabled = true;
 
     scanning = false;
+
 }
 
 </script>
 
 </body>
+
 </html>
 """
 
-@app.route("/file_0000000074d482118627681d3d6c1bfd.png")
+
+@app.route(
+    "/file_0000000074d482118627681d3d6c1bfd.png"
+)
 def force_x_logo():
 
     return send_file(
@@ -805,7 +985,11 @@ def force_x_logo():
         mimetype="image/png"
     )
 
-@app.route("/detect", methods=["POST"])
+
+@app.route(
+    "/detect",
+    methods=["POST"]
+)
 def detect():
 
     try:
@@ -813,16 +997,23 @@ def detect():
         data = request.get_json()
 
         if not data:
+
             return jsonify({
+
                 "success": False,
-                "error": "No data received"
+
+                "error":
+                    "No data received"
+
             }), 400
 
         image_data = data["image"]
+
         timestamp = data.get(
             "timestamp",
             datetime.now().isoformat()
         )
+
         duration = data.get(
             "duration",
             "0"
@@ -833,17 +1024,25 @@ def detect():
         )
 
         frame = cv2.imdecode(
+
             np.frombuffer(
                 image_bytes,
                 np.uint8
             ),
+
             cv2.IMREAD_COLOR
+
         )
 
         if frame is None:
+
             return jsonify({
+
                 "success": False,
-                "error": "Invalid image"
+
+                "error":
+                    "Invalid image"
+
             }), 400
 
         results = model(frame)
@@ -854,26 +1053,37 @@ def detect():
 
             for box in result.boxes:
 
-                class_id = int(box.cls[0])
+                class_id =
+                    int(box.cls[0])
 
-                confidence = float(
-                    box.conf[0]
-                )
+                confidence =
+                    float(box.conf[0])
 
-                object_name = model.names[
-                    class_id
-                ].lower()
+                object_name =
+                    model.names[
+                        class_id
+                    ].lower()
 
-                description = object_info.get(
-                    object_name,
-                    "Snow AI detected this object, but a built-in description is not available yet."
-                )
+                description =
+                    object_info.get(
+
+                        object_name,
+
+                        "Snow AI detected this object, but a built-in description is not available yet."
+
+                    )
 
                 google_url = (
+
                     "https://www.google.com/search?q="
+
                     + urllib.parse.quote(
-                        object_name + " information"
+
+                        object_name
+                        + " information"
+
                     )
+
                 )
 
                 objects.append({
@@ -889,11 +1099,13 @@ def detect():
 
                     "google_url":
                         google_url
+
                 })
 
         return jsonify({
 
-            "success": True,
+            "success":
+                True,
 
             "timestamp":
                 timestamp,
@@ -903,18 +1115,21 @@ def detect():
 
             "objects":
                 objects
+
         })
 
     except Exception as error:
 
         return jsonify({
 
-            "success": False,
+            "success":
+                False,
 
             "error":
                 str(error)
 
         }), 500
+
 
 @app.route("/")
 def home():
@@ -924,12 +1139,20 @@ def home():
         mimetype="text/html"
     )
 
+
 if __name__ == "__main__":
 
     import os
 
     app.run(
+
         host="0.0.0.0",
+
         port=int(
             os.environ.get(
-                "
+                "PORT",
+                5000
+            )
+        )
+
+)
