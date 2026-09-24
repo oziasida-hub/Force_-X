@@ -72,32 +72,36 @@ body {
     width: 100%;
     min-height: 100%;
     font-family: Arial, sans-serif;
-    background: #07111f;
-    color: white;
+    background: #050807;
+    color: #ffffff;
 }
 
 body {
     background:
-    radial-gradient(
-        circle at top,
-        #174a7a 0%,
-        #07111f 55%
-    );
+        radial-gradient(
+            circle at top,
+            #123b28 0%,
+            #07130d 35%,
+            #050807 75%
+        );
 }
 
 nav {
     width: 100%;
-    height: 70px;
-    padding: 10px 20px;
+    min-height: 78px;
+    padding: 10px 22px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    background: rgba(7,17,31,0.92);
+    background: rgba(3,8,5,0.96);
 
     border-bottom:
-        1px solid rgba(255,255,255,0.12);
+        1px solid rgba(48,255,125,0.25);
+
+    box-shadow:
+        0 4px 25px rgba(0,0,0,0.35);
 
     position: sticky;
     top: 0;
@@ -107,35 +111,45 @@ nav {
 .logo {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
+    gap: 12px;
 }
 
 .force-x-logo {
-    width: 48px;
-    height: 48px;
+    width: 75px;
+    height: 58px;
     object-fit: contain;
+    object-position: center;
     display: block;
+}
+
+.logo-name {
+    font-size: 19px;
+    font-weight: bold;
+    color: #35ff83;
+    letter-spacing: 2px;
 }
 
 .nav-links {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 22px;
 }
 
 .nav-links a {
-    color: #b8d9ff;
+    color: #9ee8b8;
     text-decoration: none;
     font-size: 14px;
+    font-weight: bold;
+    transition: 0.2s;
 }
 
 .nav-links a:hover {
-    color: white;
+    color: #35ff83;
 }
 
 .page {
     width: 100%;
-    min-height: calc(100vh - 70px);
+    min-height: calc(100vh - 78px);
     display: none;
     padding: 50px 20px;
 }
@@ -152,58 +166,90 @@ nav {
 
 .hero {
     text-align: center;
-    padding: 70px 10px;
+    padding: 65px 10px;
 }
 
 .logo-large {
-    font-size: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.logo-large img {
+    width: 190px;
+    max-width: 75%;
+    height: auto;
+    object-fit: contain;
 }
 
 h1 {
-    font-size: clamp(42px, 10vw, 70px);
+    font-size: clamp(44px, 10vw, 76px);
     margin: 10px 0;
+    color: #35ff83;
+    letter-spacing: 2px;
 }
 
 .subtitle {
-    color: #b8d9ff;
+    color: #a8d9b8;
     font-size: 18px;
 }
 
 .card {
-    background: rgba(255,255,255,0.08);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(10,30,19,0.78);
+
+    border:
+        1px solid rgba(53,255,131,0.20);
+
     border-radius: 24px;
+
     padding: 25px;
+
     margin-top: 25px;
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,0.25);
 }
 
 button {
-    border: none;
+    border: 1px solid rgba(53,255,131,0.35);
+
     border-radius: 15px;
+
     padding: 16px 25px;
+
     font-size: 17px;
+
     font-weight: bold;
+
     cursor: pointer;
-    background: white;
-    color: #12365c;
+
+    background: #35ff83;
+
+    color: #041008;
+
     margin: 5px;
+
+    transition: 0.2s;
 }
 
 button:hover {
     transform: scale(1.02);
+    background: #68ff9e;
 }
 
 button:disabled {
-    opacity: 0.5;
+    opacity: 0.45;
     cursor: not-allowed;
 }
 
 h2 {
     font-size: 30px;
+    color: #35ff83;
 }
 
 .info {
-    color: #b8d9ff;
+    color: #a8d9b8;
     line-height: 1.7;
 }
 
@@ -214,7 +260,8 @@ h2 {
     display: none;
     margin-top: 20px;
     border-radius: 20px;
-    background: black;
+    background: #000000;
+    border: 1px solid rgba(53,255,131,0.25);
 }
 
 #preview {
@@ -222,16 +269,19 @@ h2 {
     display: none;
     margin-top: 20px;
     border-radius: 20px;
+    border: 1px solid rgba(53,255,131,0.25);
 }
 
 .status {
     font-size: 18px;
     font-weight: bold;
     margin-top: 20px;
+    color: #35ff83;
 }
 
 .report {
-    background: rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(53,255,131,0.18);
     border-radius: 18px;
     padding: 20px;
     margin-top: 15px;
@@ -239,7 +289,8 @@ h2 {
 }
 
 .detection {
-    background: rgba(255,255,255,0.07);
+    background: rgba(53,255,131,0.06);
+    border: 1px solid rgba(53,255,131,0.12);
     border-radius: 15px;
     padding: 15px;
     margin-top: 12px;
@@ -247,7 +298,7 @@ h2 {
 
 .confidence {
     font-weight: bold;
-    color: #8ab4f8;
+    color: #35ff83;
 }
 
 .search {
@@ -255,8 +306,8 @@ h2 {
     margin-top: 10px;
     padding: 10px 15px;
     border-radius: 12px;
-    background: #8ab4f8;
-    color: #111;
+    background: #35ff83;
+    color: #041008;
     text-decoration: none;
     font-weight: bold;
 }
@@ -265,7 +316,7 @@ h2 {
 
     nav {
         height: auto;
-        min-height: 70px;
+        min-height: 78px;
         flex-direction: column;
         gap: 10px;
         padding: 10px 15px;
@@ -277,8 +328,12 @@ h2 {
     }
 
     .force-x-logo {
-        width: 45px;
-        height: 45px;
+        width: 70px;
+        height: 52px;
+    }
+
+    .logo-name {
+        font-size: 17px;
     }
 
     .nav-links {
@@ -288,11 +343,19 @@ h2 {
     }
 
     .nav-links a {
-        font-size: 12px;
+        font-size: 11px;
     }
 
     .page {
         padding: 30px 15px;
+    }
+
+    .hero {
+        padding: 45px 5px;
+    }
+
+    .logo-large img {
+        width: 150px;
     }
 }
 
@@ -308,8 +371,12 @@ h2 {
 
 <img
     src="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
-    alt="Force X"
+    alt="Force X Logo"
     class="force-x-logo">
+
+<span class="logo-name">
+FORCE X
+</span>
 
 </div>
 
@@ -342,7 +409,11 @@ HOME
 <div class="hero">
 
 <div class="logo-large">
-❄️
+
+<img
+    src="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
+    alt="Force X Logo">
+
 </div>
 
 <h1>
@@ -849,7 +920,6 @@ def detect():
         data = request.get_json()
 
         if not data:
-
             return jsonify({
                 "success": False,
                 "error": "No data received"
@@ -880,7 +950,6 @@ def detect():
         )
 
         if frame is None:
-
             return jsonify({
                 "success": False,
                 "error": "Invalid image"
