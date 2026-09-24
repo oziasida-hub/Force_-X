@@ -235,36 +235,9 @@ h2 {
     color: #35ff83;
 }
 
-h3 {
-    color: #35ff83;
-    margin-top: 25px;
-}
-
 .info {
     color: #a8d9b8;
     line-height: 1.7;
-}
-
-.species-card {
-    background: rgba(53,255,131,0.05);
-
-    border:
-        1px solid rgba(53,255,131,0.16);
-
-    border-radius: 18px;
-
-    padding: 20px;
-
-    margin-top: 18px;
-}
-
-.species-card h3 {
-    margin-top: 0;
-}
-
-.species-label {
-    color: #ffffff;
-    font-weight: bold;
 }
 
 #camera {
@@ -533,192 +506,14 @@ No detection reports yet.
 <div class="card">
 
 <p class="info">
+Force X is a computer-vision
+website powered by Snow AI.
 
-Force X is an intelligent
-computer-vision detection system
-powered by Snow AI.
-
-The system captures images and
-uses artificial intelligence to
-identify animals and other objects
-within the captured environment.
-
-Force X is also designed to keep
-track of important animal species
-and provide information about
-their habitats, discovery history
-and conservation status.
-
-</p>
-
-<h3>
-🔬 Species Monitoring
-</h3>
-
-<p class="info">
-
-If Snow AI encounters an animal
-that it cannot confidently identify,
-the system can flag the detection
-as an unrecognised species for
-further investigation.
-
-This feature is intended to help
-identify animals that may require
-additional research or a more
-specialised detection model.
-
-</p>
-
-<div class="species-card">
-
-<h3>
-🦍 Bonobo
-</h3>
-
-<p class="info">
-
-<span class="species-label">
-Natural habitat:
-</span>
-
-The bonobo is native to the
-rainforests of the Democratic
-Republic of the Congo in Central
-Africa.
-
-<br><br>
-
-<span class="species-label">
-Discovery:
-</span>
-
-Bonobos were scientifically
-recognised as a distinct species
-during the 20th century.
-
-<br><br>
-
-<span class="species-label">
-Conservation:
-</span>
-
-Bonobos are classified as
-endangered and face threats
-including habitat loss and
-illegal hunting.
-
-</p>
-
-</div>
-
-<div class="species-card">
-
-<h3>
-🦌 Okapi
-</h3>
-
-<p class="info">
-
-<span class="species-label">
-Natural habitat:
-</span>
-
-The okapi lives primarily in the
-dense tropical forests of the
-Democratic Republic of the Congo.
-
-<br><br>
-
-<span class="species-label">
-Discovery:
-</span>
-
-The okapi was scientifically
-described in 1901 after becoming
-known to scientists outside its
-native region.
-
-<br><br>
-
-<span class="species-label">
-Conservation:
-</span>
-
-The okapi is classified as
-endangered. Habitat loss,
-hunting and other human
-pressures are important threats
-to its survival.
-
-</p>
-
-</div>
-
-<div class="species-card">
-
-<h3>
-🧬 Likweli
-</h3>
-
-<p class="info">
-
-<span class="species-label">
-Natural habitat:
-</span>
-
-Information about the natural
-habitat of Likweli is currently
-being investigated by the
-Force X project.
-
-<br><br>
-
-<span class="species-label">
-Discovery:
-</span>
-
-The discovery information for
-Likweli will be added once it has
-been verified through reliable
-scientific sources.
-
-<br><br>
-
-<span class="species-label">
-Conservation:
-</span>
-
-The conservation status of
-Likweli will also be updated after
-the species information has been
-scientifically verified.
-
-</p>
-
-</div>
-
-<h3>
-🌍 Force X Mission
-</h3>
-
-<p class="info">
-
-Force X is being developed with
-wildlife protection in mind.
-
-By combining computer vision,
-animal identification and
-information reporting, Snow AI
-can assist with monitoring wildlife
-and identifying animals that may
-need further investigation.
-
-The system's long-term goal is to
-help provide useful information
-while supporting wildlife
-conservation efforts.
-
+The system captures an image,
+sends it to the Snow AI YOLO
+detection model and returns
+detected objects, confidence
+levels and descriptions.
 </p>
 
 </div>
@@ -1206,4 +1001,48 @@ def detect():
                     "description":
                         description,
 
-                    "g
+                    "google_url":
+                        google_url
+
+                })
+
+        return jsonify({
+
+            "success": True,
+
+            "timestamp":
+                timestamp,
+
+            "duration":
+                duration,
+
+            "objects":
+                objects
+
+        })
+
+    except Exception as error:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(error)
+
+        }), 500
+
+if __name__ == "__main__":
+
+    app.run(
+
+        host="0.0.0.0",
+
+        port=int(
+            os.environ.get(
+                "PORT",
+                5000
+            )
+        )
+
+)
