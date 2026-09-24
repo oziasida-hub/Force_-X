@@ -354,7 +354,7 @@ h2 {
 <div class="logo">
 
 <img
-    src="https://force-x.onrender.com/b7077110b14418925995ebc6e641fc8c.png"
+    src="/static/b7077110b14418925995ebc6e641fc8c.png"
     alt="Force X Logo"
     class="force-x-logo">
 
