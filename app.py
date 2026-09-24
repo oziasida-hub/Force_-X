@@ -58,7 +58,7 @@ HTML = r"""
 <link
     rel="icon"
     type="image/png"
-    href="https://force-x.onrender.com/file_0000000074d482118627681d3d6c1bfd.png">
+    href="/static/file_0000000074d482118627681d3d6c1bfd.png">
 
 <style>
 
