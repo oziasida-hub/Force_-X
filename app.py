@@ -354,7 +354,7 @@ h2 {
 <div class="logo">
 
 <img
-    src="https://force-x.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
+    src="https://force-x.onrender.com/b7077110b14418925995ebc6e641fc8c.png"
     alt="Force X Logo"
     class="force-x-logo">
 
@@ -516,44 +516,53 @@ scan.Our system mainly focuses
 on discovering new species and
 conserving rare ones.Our main species 
 include:
-        🦍 1. Bonobo — Pan paniscus
+
+
+🦍 1. Bonobo — Pan paniscus
 Classification: Great ape, family Hominidae
 Range: Democratic Republic of the Congo (DRC)
 Habitat: Primarily tropical forests, including primary/old secondary forest, with some use of swamp and more open/secondary habitats. Research at Wamba found that bonobos strongly preferred forested areas and used primary/old secondary forest for most ranging and sleeping. �
-PubMed +1
+
 What makes it interesting?
 Bonobos are extremely social great apes. Their communities have a fission–fusion structure: a larger community can split into smaller groups while foraging and come together again. Their diet is dominated by plant foods, especially fruit, but includes leaves, stems, roots, flowers, mushrooms and some invertebrates. �
 Animal Diversity Web +1
 They're also particularly important to evolutionary research because bonobos and chimpanzees are our closest living relatives.
+
 Scientific discovery
 Bonobos were formally recognised as a separate species, Pan paniscus, in 1929. Earlier specimens had been mistaken for unusually small chimpanzees. �
 Smithsonian Magazine
+
 Conservation
 Endangered. Major threats include hunting, habitat degradation and human encroachment. Their population is difficult to estimate accurately because much of their range is remote and heavily forested; conservation organisations currently describe the wild population as roughly 10,000–20,000, while emphasising that it is fragmented and declining. �
 BONOBO
 For Force X: Bonobo detection could be particularly useful because distinguishing bonobos from other primates requires more than simply detecting "monkey." A future Snow AI model could learn characteristics such as body shape, facial appearance and behaviour.
+
 
 🦒 2. Okapi — Okapia johnstoni
 Classification: Giraffid
 Closest living relative: Giraffe
 Range: Democratic Republic of the Congo
 Habitat: Tropical rainforest, particularly the forests of central and northeastern DRC. �
-IUCN +1
+
+
 The okapi is one of the coolest targets for Force X because it can look almost like a combination of different animals: its body resembles a forest antelope, while its legs have striking zebra-like striping. Despite its appearance, it is actually a member of the giraffe family. �
-Smithsonian Institution +1
+
+
 Diet
 Okapis are primarily browsers. They feed on vegetation, including leaves and other forest plants. Their long tongue helps them pull foliage from branches. �
 Smith College Science
+
 Scientific discovery
 This one has an interesting history.
 Local peoples already knew the animal, but European scientists initially had difficulty determining what it was. Sir Harry Johnston obtained pieces of skin in the late 1890s, and further specimens—including a complete skin and skulls—were obtained in 1901. Scientists then recognised it as a previously undescribed giraffid and established the genus Okapia. �
-Africamuseum +1
+
+
 So for your website, I'd phrase this as:
 Scientifically recognised: 1901
 rather than saying simply "discovered in 1901," because people living in its range already knew the animal.
 Conservation
 The okapi is Endangered. It is endemic to the DRC and depends heavily on forest habitat. Conservation efforts therefore focus strongly on protecting its forest environment and reducing pressures such as hunting and habitat disturbance. �
-IUCN +1
+
 For Force X: Okapi would be an excellent target species because its unusual appearance gives a computer-vision system several potentially useful features to learn—body proportions, brown coat, distinctive striped legs and giraffid head/neck structure.
 
 🐒 3. Likweli — Colobus congoensis
@@ -562,15 +571,16 @@ Scientific name
 Colobus congoensis
 Common name: Likweli
 It is a newly described African colobus monkey from the Democratic Republic of the Congo. �
-PLOS +1
+
 Where does it live?
 Researchers have found it in Lomami National Park and surrounding areas in the DRC.
 It appears to be strongly associated with high, closed forest canopy, including terra-firme forest. The published study estimated its known range at approximately 1,700 km². �
-PLOS
+
 Appearance
 This is where Likweli becomes particularly useful for Snow AI.
 It is predominantly black, with distinctive orange-cream coloration around the mouth and nose. It also has a white patch beneath the tail. �
-PLOS +1
+
+
 Researchers used several types of evidence to distinguish it from related colobus monkeys:
 physical characteristics
 skull and dental characteristics
@@ -578,18 +588,20 @@ genetics
 vocalisations
 geographical distribution
 The researchers concluded that it is a distinct species. �
-PLOS
+
+
 How recently was it discovered?
 This needs a little nuance.
 Researchers photographed an unfamiliar monkey in 2008. Additional observations and much better photographs followed, particularly from 2018 onward. Researchers eventually accumulated enough evidence to formally establish it as a new species.
 The scientific description was published on 15 July 2026. �
-Nature +1
+
+
 So the Force X website could say:
 Formally described as a new species: 15 July 2026
 That's much more accurate than simply saying "discovered in 2026."
 Population observations
 Between 2018 and 2022, researchers recorded 114 observations over approximately 1,700 km². The monkeys were usually observed in small groups averaging about 6 individuals. �
-PLOS
+
 Conservation status
 This is another important distinction.
 The scientists recommend a preliminary classification of Endangered (EN) because of the species' small known range and population, combined with hunting pressure and habitat conversion. �
