@@ -55,9 +55,10 @@ HTML = r"""
 
 <title>Force X</title>
 
-<link rel="icon"
-      type="image/png"
-      href="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png">
+<link
+    rel="icon"
+    type="image/png"
+    href="https://force-x.onrender.com/file_0000000074d482118627681d3d6c1bfd.png">
 
 <style>
 
@@ -370,7 +371,7 @@ h2 {
 <div class="logo">
 
 <img
-    src="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
+    src="https://force-x.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
     alt="Force X Logo"
     class="force-x-logo">
 
@@ -411,7 +412,7 @@ HOME
 <div class="logo-large">
 
 <img
-    src="https://force-x-backend.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
+    src="https://force-x.onrender.com/file_0000000074d482118627681d3d6c1bfd.png"
     alt="Force X Logo">
 
 </div>
@@ -904,12 +905,12 @@ function resetButtons() {
 </html>
 """
 
-@app.route("/file_0000000074d482118627681d3d6c1bfd.png")
-def force_x_logo():
+@app.route("/")
+def home():
 
-    return send_file(
-        "file_0000000074d482118627681d3d6c1bfd.png",
-        mimetype="image/png"
+    return Response(
+        HTML,
+        mimetype="text/html"
     )
 
 @app.route("/detect", methods=["POST"])
@@ -1012,14 +1013,6 @@ def detect():
             "success": False,
             "error": str(error)
         }), 500
-
-@app.route("/")
-def home():
-
-    return Response(
-        HTML,
-        mimetype="text/html"
-    )
 
 if __name__ == "__main__":
 
