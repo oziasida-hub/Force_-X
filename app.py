@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response,send_file
 from flask_cors import CORS
 from ultralytics import YOLO
 from datetime import datetime
@@ -1128,6 +1128,10 @@ def detect():
                 str(error)
 
         }), 500
+    
+    @app.route("/logo")
+def logo():
+    return send_file("b7077110b14418925995ebc6e641fc8c.png")
 
 if __name__ == "__main__":
 
