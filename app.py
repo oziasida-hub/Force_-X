@@ -58,7 +58,7 @@ HTML = r"""
 <link
     rel="icon"
     type="image/png"
-    href="/static/file_0000000074d482118627681d3d6c1bfd.png">
+    href="/file_0000000074d482118627681d3d6c1bfd.png">
 
 <style>
 
@@ -354,7 +354,7 @@ h2 {
 <div class="logo">
 
 <img
-    src="/static/b7077110b14418925995ebc6e641fc8c.png"
+    src="/file_0000000074d482118627681d3d6c1bfd.png"
     alt="Force X Logo"
     class="force-x-logo">
 
