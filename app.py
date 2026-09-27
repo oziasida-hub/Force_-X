@@ -1,344 +1,846 @@
-from flask import Flask, request, jsonify, Response,send_file
-from flask_cors import CORS
-from ultralytics import YOLO
-from datetime import datetime
-from base64 import b64decode
-import numpy as np
-import cv2
-import urllib.parse
-import os
-
-model = YOLO("yolo11n.pt")
-
-object_info = {
-    "person": "A human being.",
-    "dog": "A domesticated mammal commonly kept as a companion animal.",
-    "cat": "A domesticated mammal commonly kept as a companion animal.",
-    "bird": "A warm-blooded animal with feathers, wings and a beak.",
-    "horse": "A large domesticated mammal commonly used for riding and work.",
-    "cow": "A domesticated mammal commonly raised for milk and meat.",
-    "sheep": "A domesticated mammal commonly raised for wool and meat.",
-    "elephant": "A very large land mammal known for its trunk and tusks.",
-    "bear": "A large mammal belonging to the bear family.",
-    "zebra": "A wild African mammal known for its black-and-white stripes.",
-    "giraffe": "A tall African mammal known for its long neck and legs.",
-    "car": "A motor vehicle mainly designed to transport people.",
-    "bicycle": "A human-powered vehicle with two wheels.",
-    "motorcycle": "A two-wheeled motor vehicle.",
-    "bus": "A large road vehicle designed to transport passengers.",
-    "truck": "A motor vehicle designed mainly for transporting goods.",
-    "laptop": "A portable personal computer.",
-    "cell phone": "A portable electronic device used for communication and digital tasks.",
-    "bottle": "A container commonly used to hold liquids.",
-    "chair": "A piece of furniture designed for one person to sit on.",
-    "backpack": "A bag designed to be carried on a person's back."
-}
-
-app = Flask(__name__)
-
-CORS(
-    app,
-    origins=[
-        "https://force-x.onrender.com",
-        "https://force-x-frontend.onrender.com"
-    ]
-)
-
-HTML = r"""
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Force X</title>
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
 
-<link
-    rel="icon"
-    type="image/png"
-    href="/file_0000000074d482118627681d3d6c1bfd.png">
+<title>FORCE X — Snow AI</title>
 
 <style>
 
+/* =========================================================
+   FORCE X — SNOW AI INTERFACE
+   Frontend only
+   Backend connection:
+   https://force-x-backend.onrender.com/detect
+========================================================= */
+
 * {
     box-sizing: border-box;
-}
-
-html,
-body {
     margin: 0;
     padding: 0;
-    width: 100%;
-    min-height: 100%;
-    font-family: Arial, sans-serif;
-    background: #050807;
-    color: #ffffff;
+}
+
+:root {
+    --bg: #030706;
+    --panel: #07120d;
+    --panel2: #0b1c13;
+    --green: #38ff88;
+    --green2: #1bd66b;
+    --text: #f3fff7;
+    --muted: #8eaa9a;
+    --border: rgba(56,255,136,0.16);
+    --danger: #ff5d68;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
+    min-height: 100vh;
     background:
         radial-gradient(
-            circle at top,
-            #123b28 0%,
-            #07130d 35%,
-            #050807 75%
-        );
+            circle at 50% -10%,
+            rgba(28,120,70,0.35),
+            transparent 42%
+        ),
+        radial-gradient(
+            circle at 100% 80%,
+            rgba(20,90,55,0.15),
+            transparent 35%
+        ),
+        var(--bg);
+
+    color: var(--text);
+    font-family:
+        Inter,
+        Arial,
+        Helvetica,
+        sans-serif;
 }
 
-nav {
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
     width: 100%;
-    min-height: 78px;
-    padding: 10px 22px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    background: rgba(3,8,5,0.96);
+    padding: 15px 5%;
+
+    background:
+        rgba(3,7,6,0.88);
+
+    backdrop-filter: blur(18px);
 
     border-bottom:
-        1px solid rgba(48,255,125,0.25);
-
-    box-shadow:
-        0 4px 25px rgba(0,0,0,0.35);
-
-    position: sticky;
-    top: 0;
-    z-index: 10;
+        1px solid var(--border);
 }
 
-.logo {
+/* Custom Force X logo */
+
+.brand {
     display: flex;
     align-items: center;
     gap: 12px;
+
+    cursor: pointer;
 }
 
-.force-x-logo {
-    width: 75px;
-    height: 58px;
-    object-fit: contain;
-    object-position: center;
-    display: block;
+.logo-mark {
+    width: 42px;
+    height: 42px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid var(--green);
+
+    border-radius: 12px;
+
+    color: var(--green);
+
+    font-size: 20px;
+    font-weight: 900;
+
+    box-shadow:
+        0 0 18px rgba(56,255,136,0.18);
+
+    transform: skew(-8deg);
 }
 
-.logo-name {
-    font-size: 19px;
-    font-weight: bold;
-    color: #35ff83;
-    letter-spacing: 2px;
+.brand-text {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.brand-text span {
+    color: var(--green);
 }
 
 .nav-links {
     display: flex;
-    align-items: center;
-    gap: 22px;
+    gap: 25px;
 }
 
-.nav-links a {
-    color: #9ee8b8;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: bold;
+.nav-links button {
+    border: none;
+    background: transparent;
+
+    color: var(--muted);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
     transition: 0.2s;
 }
 
-.nav-links a:hover {
-    color: #35ff83;
+.nav-links button:hover,
+.nav-links button.active {
+    color: var(--green);
 }
 
+/* =========================================================
+   PAGE SYSTEM
+========================================================= */
+
 .page {
-    width: 100%;
-    min-height: calc(100vh - 78px);
     display: none;
-    padding: 50px 20px;
+
+    width: 100%;
+    min-height: calc(100vh - 72px);
+
+    padding: 60px 5%;
 }
 
 .page.active {
     display: block;
 }
 
-.content {
+.container {
     width: 100%;
-    max-width: 900px;
+    max-width: 1100px;
+
     margin: auto;
 }
 
+/* =========================================================
+   HERO
+========================================================= */
+
 .hero {
+    min-height: 75vh;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
     text-align: center;
-    padding: 65px 10px;
 }
 
-h1 {
-    font-size: clamp(44px, 10vw, 76px);
-    margin: 10px 0;
-    color: #35ff83;
-    letter-spacing: 2px;
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    padding: 8px 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 50px;
+
+    background: rgba(56,255,136,0.05);
+
+    color: var(--green);
+
+    font-size: 12px;
+    font-weight: 700;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 25px;
 }
 
-.subtitle {
-    color: #a8d9b8;
-    font-size: 18px;
-}
+.status-dot {
+    width: 7px;
+    height: 7px;
 
-.card {
-    background: rgba(10,30,19,0.78);
+    border-radius: 50%;
 
-    border:
-        1px solid rgba(53,255,131,0.20);
-
-    border-radius: 24px;
-
-    padding: 25px;
-
-    margin-top: 25px;
+    background: var(--green);
 
     box-shadow:
-        0 10px 35px rgba(0,0,0,0.25);
+        0 0 10px var(--green);
 }
 
-button {
-    border: 1px solid rgba(53,255,131,0.35);
+.hero h1 {
+    font-size: clamp(55px, 12vw, 115px);
 
-    border-radius: 15px;
+    line-height: 0.95;
 
-    padding: 16px 25px;
+    letter-spacing: -5px;
+
+    margin-bottom: 20px;
+}
+
+.hero h1 span {
+    color: var(--green);
+
+    text-shadow:
+        0 0 40px rgba(56,255,136,0.2);
+}
+
+.hero p {
+    max-width: 650px;
+
+    color: var(--muted);
 
     font-size: 17px;
 
-    font-weight: bold;
+    line-height: 1.7;
+
+    margin-bottom: 35px;
+}
+
+.primary-btn {
+    border: none;
+
+    padding: 16px 28px;
+
+    border-radius: 14px;
+
+    background: var(--green);
+
+    color: #021007;
+
+    font-size: 15px;
+    font-weight: 900;
 
     cursor: pointer;
 
-    background: #35ff83;
-
-    color: #041008;
-
-    margin: 5px;
+    box-shadow:
+        0 10px 35px rgba(56,255,136,0.15);
 
     transition: 0.2s;
 }
 
-button:hover {
-    transform: scale(1.02);
-    background: #68ff9e;
+.primary-btn:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 15px 40px rgba(56,255,136,0.25);
 }
 
-button:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
+.secondary-btn {
+    border: 1px solid var(--border);
+
+    padding: 15px 25px;
+
+    border-radius: 14px;
+
+    background: rgba(255,255,255,0.02);
+
+    color: var(--text);
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
 }
 
-h2 {
-    font-size: 30px;
-    color: #35ff83;
+.secondary-btn:hover {
+    border-color: rgba(56,255,136,0.4);
 }
 
-.info {
-    color: #a8d9b8;
-    line-height: 1.7;
+/* =========================================================
+   SECTION HEADERS
+========================================================= */
+
+.section-header {
+    margin-bottom: 30px;
+}
+
+.section-header h2 {
+    font-size: 38px;
+
+    margin-bottom: 8px;
+}
+
+.section-header p {
+    color: var(--muted);
+}
+
+/* =========================================================
+   DETECTION PANEL
+========================================================= */
+
+.scanner {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1.4fr)
+        minmax(280px, 0.6fr);
+
+    gap: 20px;
+}
+
+.camera-panel,
+.control-panel {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,28,19,0.95),
+            rgba(4,12,8,0.95)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 24px;
+
+    padding: 20px;
+}
+
+/* Camera */
+
+.camera-container {
+    position: relative;
+
+    width: 100%;
+
+    min-height: 450px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    border-radius: 18px;
+
+    background:
+        radial-gradient(
+            circle,
+            #0d2116,
+            #020504
+        );
+
+    border: 1px solid rgba(56,255,136,0.1);
 }
 
 #camera {
     width: 100%;
-    max-height: 500px;
+    height: 100%;
+
+    min-height: 450px;
+
     object-fit: cover;
+
     display: none;
-    margin-top: 20px;
-    border-radius: 20px;
-    background: #000000;
-    border: 1px solid rgba(53,255,131,0.25);
 }
+
+.camera-placeholder {
+    text-align: center;
+
+    color: var(--muted);
+}
+
+.camera-icon {
+    font-size: 55px;
+
+    margin-bottom: 15px;
+
+    opacity: 0.7;
+}
+
+/* Scanner corners */
+
+.scan-corners {
+    position: absolute;
+
+    inset: 25px;
+
+    pointer-events: none;
+
+    display: none;
+}
+
+.scan-corners::before,
+.scan-corners::after {
+    content: "";
+
+    position: absolute;
+
+    width: 45px;
+    height: 45px;
+
+    border-color: var(--green);
+    border-style: solid;
+}
+
+.scan-corners::before {
+    top: 0;
+    left: 0;
+
+    border-width: 3px 0 0 3px;
+}
+
+.scan-corners::after {
+    bottom: 0;
+    right: 0;
+
+    border-width: 0 3px 3px 0;
+}
+
+/* scanning animation */
+
+.scanning-line {
+    position: absolute;
+
+    left: 5%;
+    right: 5%;
+
+    top: 10%;
+
+    height: 2px;
+
+    background: var(--green);
+
+    box-shadow:
+        0 0 15px var(--green),
+        0 0 30px var(--green);
+
+    display: none;
+
+    animation:
+        scanLine 2s linear infinite;
+}
+
+@keyframes scanLine {
+
+    0% {
+        top: 10%;
+    }
+
+    50% {
+        top: 90%;
+    }
+
+    100% {
+        top: 10%;
+    }
+
+}
+
+/* Controls */
+
+.control-panel h3 {
+    margin-bottom: 10px;
+}
+
+.control-panel p {
+    color: var(--muted);
+
+    line-height: 1.6;
+
+    font-size: 14px;
+
+    margin-bottom: 25px;
+}
+
+.control-buttons {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+}
+
+.control-buttons button {
+    width: 100%;
+}
+
+#stopButton {
+    background: rgba(255,93,104,0.08);
+
+    border: 1px solid rgba(255,93,104,0.2);
+
+    color: var(--danger);
+}
+
+#stopButton:hover {
+    background: rgba(255,93,104,0.15);
+}
+
+.scan-status {
+    margin-top: 25px;
+
+    padding: 15px;
+
+    border-radius: 14px;
+
+    background: rgba(0,0,0,0.25);
+
+    border: 1px solid var(--border);
+
+    color: var(--green);
+
+    font-size: 13px;
+
+    line-height: 1.5;
+}
+
+/* =========================================================
+   PREVIEW
+========================================================= */
 
 #preview {
     width: 100%;
+
+    margin-top: 15px;
+
     display: none;
-    margin-top: 20px;
-    border-radius: 20px;
-    border: 1px solid rgba(53,255,131,0.25);
+
+    border-radius: 18px;
+
+    border: 1px solid var(--border);
 }
 
-.status {
-    font-size: 18px;
-    font-weight: bold;
-    margin-top: 20px;
-    color: #35ff83;
+/* =========================================================
+   REPORTS
+========================================================= */
+
+.report-empty {
+    padding: 70px 20px;
+
+    text-align: center;
+
+    border:
+        1px dashed
+        rgba(56,255,136,0.15);
+
+    border-radius: 22px;
+
+    color: var(--muted);
 }
 
 .report {
-    background: rgba(0,0,0,0.35);
-    border: 1px solid rgba(53,255,131,0.18);
-    border-radius: 18px;
-    padding: 20px;
-    margin-top: 15px;
-    line-height: 1.7;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(11,28,19,0.95),
+            rgba(4,12,8,0.95)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 24px;
+
+    padding: 25px;
+}
+
+.report-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    flex-wrap: wrap;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid var(--border);
+
+    margin-bottom: 20px;
+}
+
+.report-title {
+    color: var(--green);
+
+    font-size: 20px;
+
+    font-weight: 900;
+}
+
+.report-meta {
+    color: var(--muted);
+
+    font-size: 13px;
 }
 
 .detection {
-    background: rgba(53,255,131,0.06);
-    border: 1px solid rgba(53,255,131,0.12);
-    border-radius: 15px;
-    padding: 15px;
+    padding: 20px;
+
     margin-top: 12px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(56,255,136,0.035);
+
+    border: 1px solid rgba(56,255,136,0.12);
+}
+
+.detection-name {
+    font-size: 22px;
+
+    font-weight: 900;
+
+    margin-bottom: 8px;
 }
 
 .confidence {
-    font-weight: bold;
-    color: #35ff83;
+    color: var(--green);
+
+    font-weight: 900;
 }
 
-.search {
-    display: inline-block;
+.detection-description {
+    color: var(--muted);
+
+    line-height: 1.6;
+
     margin-top: 10px;
-    padding: 10px 15px;
-    border-radius: 12px;
-    background: #35ff83;
-    color: #041008;
-    text-decoration: none;
-    font-weight: bold;
 }
 
-@media (max-width: 650px) {
+.google-link {
+    display: inline-block;
 
-    nav {
-        height: auto;
-        min-height: 78px;
-        flex-direction: column;
-        gap: 10px;
-        padding: 10px 15px;
+    margin-top: 15px;
+
+    padding: 9px 13px;
+
+    border-radius: 10px;
+
+    background: rgba(56,255,136,0.08);
+
+    border: 1px solid var(--border);
+
+    color: var(--green);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+.about-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+}
+
+.species-card {
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(8,22,15,0.8);
+
+    border: 1px solid var(--border);
+
+    transition: 0.2s;
+}
+
+.species-card:hover {
+    transform: translateY(-4px);
+
+    border-color:
+        rgba(56,255,136,0.35);
+}
+
+.species-icon {
+    font-size: 40px;
+
+    margin-bottom: 15px;
+}
+
+.species-card h3 {
+    color: var(--green);
+
+    margin-bottom: 8px;
+}
+
+.species-card p {
+    color: var(--muted);
+
+    line-height: 1.6;
+
+    font-size: 14px;
+}
+
+.about-description {
+    margin-top: 25px;
+
+    padding: 25px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(8,22,15,0.8);
+
+    border: 1px solid var(--border);
+
+    color: var(--muted);
+
+    line-height: 1.8;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading {
+    display: inline-block;
+
+    width: 15px;
+    height: 15px;
+
+    border: 2px solid rgba(56,255,136,0.2);
+
+    border-top-color: var(--green);
+
+    border-radius: 50%;
+
+    animation:
+        spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
     }
 
-    .logo {
-        width: 100%;
-        justify-content: flex-start;
-    }
+}
 
-    .force-x-logo {
-        width: 70px;
-        height: 52px;
-    }
+/* =========================================================
+   MOBILE
+========================================================= */
 
-    .logo-name {
-        font-size: 17px;
+@media (max-width: 800px) {
+
+    .navbar {
+        padding: 12px 18px;
     }
 
     .nav-links {
-        width: 100%;
-        justify-content: space-between;
-        gap: 8px;
+        gap: 10px;
     }
 
-    .nav-links a {
+    .nav-links button {
         font-size: 11px;
     }
 
-    .page {
-        padding: 30px 15px;
+    .brand-text {
+        display: none;
     }
 
-    .hero {
-        padding: 45px 5px;
+    .scanner {
+        grid-template-columns: 1fr;
+    }
+
+    .camera-container,
+    #camera {
+        min-height: 350px;
+    }
+
+    .about-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .page {
+        padding: 40px 18px;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .navbar {
+        align-items: center;
+    }
+
+    .nav-links {
+        gap: 5px;
+    }
+
+    .nav-links button {
+        padding: 5px;
+        font-size: 10px;
+    }
+
+    .hero h1 {
+        letter-spacing: -3px;
     }
 
 }
@@ -349,801 +851,411 @@ h2 {
 
 <body>
 
-<nav>
+<!-- =======================================================
+     NAVIGATION
+======================================================= -->
 
-<div class="logo">
+<nav class="navbar">
 
-<img
-    src="/file_0000000074d482118627681d3d6c1bfd.png"
-    alt="Force X Logo"
-    class="force-x-logo">
+    <div
+        class="brand"
+        onclick="showPage('home')">
 
-<span class="logo-name">
-FORCE X
-</span>
+        <div class="logo-mark">
+            X
+        </div>
 
-</div>
+        <div class="brand-text">
+            FORCE <span>X</span>
+        </div>
 
-<div class="nav-links">
+    </div>
 
-<a href="#" onclick="showPage('home'); return false;">
-HOME
-</a>
+    <div class="nav-links">
 
-<a href="#" onclick="showPage('detection'); return false;">
-📷 DETECTION
-</a>
+        <button
+            id="nav-home"
+            class="active"
+            onclick="showPage('home')">
+            HOME
+        </button>
 
-<a href="#" onclick="showPage('reports'); return false;">
-📊 REPORTS
-</a>
+        <button
+            id="nav-detection"
+            onclick="showPage('detection')">
+            SCAN
+        </button>
 
-<a href="#" onclick="showPage('about'); return false;">
-ℹ️ ABOUT
-</a>
+        <button
+            id="nav-reports"
+            onclick="showPage('reports')">
+            REPORTS
+        </button>
 
-</div>
+        <button
+            id="nav-about"
+            onclick="showPage('about')">
+            ABOUT
+        </button>
+
+    </div>
 
 </nav>
 
-<section id="home" class="page active">
 
-<div class="content">
+<!-- =======================================================
+     HOME
+======================================================= -->
 
-<div class="hero">
+<section
+    id="home"
+    class="page active">
 
-<h1>
-Force X
-</h1>
+    <div class="container">
 
-<p class="subtitle">
-Intelligent Detection System
-</p>
+        <div class="hero">
 
-<div class="card">
+            <div class="status-pill">
 
-<p class="info">
-Welcome to Force X — a detection
-system powered by Snow AI,
-designed to identify objects and
-animals using artificial intelligence.
-</p>
+                <span class="status-dot"></span>
 
-<button onclick="showPage('detection')">
-📷 START SCAN
-</button>
+                SNOW AI ONLINE
 
-</div>
+            </div>
 
-</div>
+            <h1>
+                FORCE <span>X</span>
+            </h1>
 
-</div>
+            <p>
 
-</section>
+                Intelligent computer vision
+                for discovering and identifying
+                the world around you.
 
-<section id="detection" class="page">
+                Powered by Snow AI.
 
-<div class="content">
+            </p>
 
-<h2>
-📷 Detection
-</h2>
+            <button
+                class="primary-btn"
+                onclick="showPage('detection')">
 
-<div class="card">
+                START DETECTION
 
-<p class="info">
-Start a five-second Snow AI scan.
-</p>
+            </button>
 
-<button
-    id="startButton"
-    onclick="startScan()">
-📷 START SCAN
-</button>
+        </div>
 
-<button
-    id="stopButton"
-    onclick="stopScan()"
-    disabled>
-⛔ STOP
-</button>
-
-<video
-    id="camera"
-    autoplay
-    playsinline>
-</video>
-
-<canvas
-    id="canvas"
-    style="display:none;">
-</canvas>
-
-<img id="preview">
-
-<p
-    id="scanStatus"
-    class="status">
-🟢 Ready to scan
-</p>
-
-</div>
-
-</div>
+    </div>
 
 </section>
 
-<section id="reports" class="page">
 
-<div class="content">
+<!-- =======================================================
+     DETECTION
+======================================================= -->
 
-<h2>
-📊 Reports
-</h2>
+<section
+    id="detection"
+    class="page">
 
-<div class="card">
+    <div class="container">
 
-<div
-    id="reportText"
-    class="info">
-No detection reports yet.
-</div>
+        <div class="section-header">
 
-</div>
+            <h2>
+                Snow AI Scanner
+            </h2>
 
-</div>
+            <p>
+                Point your camera at an object
+                or animal and let Snow AI analyze it.
+            </p>
 
-</section>
-
-<section id="about" class="page">
-
-<div class="content">
-
-<h2>
-ℹ️ About Force X
-</h2>
-
-<div class="card">
-
-<p class="info">
-Force X is a computer-vision
-website powered by Snow AI.
-
-The system captures an image,
-sends it to the Snow AI and
-get's a detailed report of the
-scan.Our system mainly focuses
-on discovering new species and
-conserving rare ones.Our main species 
-include:
+        </div>
 
 
-🦍 1. Bonobo — Pan paniscus
-Classification: Great ape, family Hominidae
-Range: Democratic Republic of the Congo (DRC)
-Habitat: Primarily tropical forests, including primary/old secondary forest, with some use of swamp and more open/secondary habitats. Research at Wamba found that bonobos strongly preferred forested areas and used primary/old secondary forest for most ranging and sleeping. �
-
-What makes it interesting?
-Bonobos are extremely social great apes. Their communities have a fission–fusion structure: a larger community can split into smaller groups while foraging and come together again. Their diet is dominated by plant foods, especially fruit, but includes leaves, stems, roots, flowers, mushrooms and some invertebrates. �
-Animal Diversity Web +1
-They're also particularly important to evolutionary research because bonobos and chimpanzees are our closest living relatives.
-
-Scientific discovery
-Bonobos were formally recognised as a separate species, Pan paniscus, in 1929. Earlier specimens had been mistaken for unusually small chimpanzees. �
-Smithsonian Magazine
-
-Conservation
-Endangered. Major threats include hunting, habitat degradation and human encroachment. Their population is difficult to estimate accurately because much of their range is remote and heavily forested; conservation organisations currently describe the wild population as roughly 10,000–20,000, while emphasising that it is fragmented and declining. �
-BONOBO
-For Force X: Bonobo detection could be particularly useful because distinguishing bonobos from other primates requires more than simply detecting "monkey." A future Snow AI model could learn characteristics such as body shape, facial appearance and behaviour.
+        <div class="scanner">
 
 
-🦒 2. Okapi — Okapia johnstoni
-Classification: Giraffid
-Closest living relative: Giraffe
-Range: Democratic Republic of the Congo
-Habitat: Tropical rainforest, particularly the forests of central and northeastern DRC. �
+            <!-- CAMERA -->
+
+            <div class="camera-panel">
+
+                <div class="camera-container">
+
+                    <div
+                        id="cameraPlaceholder"
+                        class="camera-placeholder">
+
+                        <div class="camera-icon">
+                            ◉
+                        </div>
+
+                        <p>
+                            Camera ready
+                        </p>
+
+                    </div>
+
+                    <video
+                        id="camera"
+                        autoplay
+                        playsinline>
+                    </video>
+
+                    <div
+                        id="scanCorners"
+                        class="scan-corners">
+                    </div>
+
+                    <div
+                        id="scanningLine"
+                        class="scanning-line">
+                    </div>
+
+                </div>
 
 
-The okapi is one of the coolest targets for Force X because it can look almost like a combination of different animals: its body resembles a forest antelope, while its legs have striking zebra-like striping. Despite its appearance, it is actually a member of the giraffe family. �
+                <canvas
+                    id="canvas"
+                    style="display:none;">
+                </canvas>
 
 
-Diet
-Okapis are primarily browsers. They feed on vegetation, including leaves and other forest plants. Their long tongue helps them pull foliage from branches. �
-Smith College Science
+                <img
+                    id="preview"
+                    alt="Captured image">
 
-Scientific discovery
-This one has an interesting history.
-Local peoples already knew the animal, but European scientists initially had difficulty determining what it was. Sir Harry Johnston obtained pieces of skin in the late 1890s, and further specimens—including a complete skin and skulls—were obtained in 1901. Scientists then recognised it as a previously undescribed giraffid and established the genus Okapia. �
+            </div>
 
 
-So for your website, I'd phrase this as:
-Scientifically recognised: 1901
-rather than saying simply "discovered in 1901," because people living in its range already knew the animal.
-Conservation
-The okapi is Endangered. It is endemic to the DRC and depends heavily on forest habitat. Conservation efforts therefore focus strongly on protecting its forest environment and reducing pressures such as hunting and habitat disturbance. �
+            <!-- CONTROLS -->
 
-For Force X: Okapi would be an excellent target species because its unusual appearance gives a computer-vision system several potentially useful features to learn—body proportions, brown coat, distinctive striped legs and giraffid head/neck structure.
+            <div class="control-panel">
 
-🐒 3. Likweli — Colobus congoensis
-This is the newest and most interesting one for your project.
-Scientific name
-Colobus congoensis
-Common name: Likweli
-It is a newly described African colobus monkey from the Democratic Republic of the Congo. �
+                <h3>
+                    Detection Control
+                </h3>
 
-Where does it live?
-Researchers have found it in Lomami National Park and surrounding areas in the DRC.
-It appears to be strongly associated with high, closed forest canopy, including terra-firme forest. The published study estimated its known range at approximately 1,700 km². �
+                <p>
 
-Appearance
-This is where Likweli becomes particularly useful for Snow AI.
-It is predominantly black, with distinctive orange-cream coloration around the mouth and nose. It also has a white patch beneath the tail. �
+                    Snow AI will activate your
+                    camera, capture a frame and
+                    send it to the Force X
+                    detection system.
+
+                </p>
 
 
-Researchers used several types of evidence to distinguish it from related colobus monkeys:
-physical characteristics
-skull and dental characteristics
-genetics
-vocalisations
-geographical distribution
-The researchers concluded that it is a distinct species. �
+                <div class="control-buttons">
+
+                    <button
+                        id="startButton"
+                        class="primary-btn"
+                        onclick="startScan()">
+
+                        START SCAN
+
+                    </button>
 
 
-How recently was it discovered?
-This needs a little nuance.
-Researchers photographed an unfamiliar monkey in 2008. Additional observations and much better photographs followed, particularly from 2018 onward. Researchers eventually accumulated enough evidence to formally establish it as a new species.
-The scientific description was published on 15 July 2026. �
+                    <button
+                        id="stopButton"
+                        class="secondary-btn"
+                        onclick="stopScan()"
+                        disabled>
+
+                        STOP SCAN
+
+                    </button>
+
+                </div>
 
 
-So the Force X website could say:
-Formally described as a new species: 15 July 2026
-That's much more accurate than simply saying "discovered in 2026."
-Population observations
-Between 2018 and 2022, researchers recorded 114 observations over approximately 1,700 km². The monkeys were usually observed in small groups averaging about 6 individuals. �
+                <div
+                    id="scanStatus"
+                    class="scan-status">
 
-Conservation status
-This is another important distinction.
-The scientists recommend a preliminary classification of Endangered (EN) because of the species' small known range and population, combined with hunting pressure and habitat conversion. �
-PubMed Central (PMC)
+                    ● Ready for detection
 
-        Why Likweli matters to Snow AI
-This is actually a great example of why your "unrecognised species" idea makes sense.
-A camera system could encounter an animal that doesn't match the species it has been trained on. Instead of confidently calling it something else, Snow AI could eventually respond:
+                </div>
 
-</p>
+            </div>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </section>
 
-<script>
 
-let stream = null;
-let timer = null;
-let scanning = false;
-let startTime = 0;
+<!-- =======================================================
+     REPORTS
+======================================================= -->
 
-function showPage(page) {
+<section
+    id="reports"
+    class="page">
 
-    document
-        .querySelectorAll(".page")
-        .forEach(function(section) {
+    <div class="container">
 
-            section.classList.remove("active");
+        <div class="section-header">
 
-        });
+            <h2>
+                Detection Reports
+            </h2>
 
-    document
-        .getElementById(page)
-        .classList.add("active");
+            <p>
+                Results generated by Snow AI.
+            </p>
 
-    window.scrollTo(0, 0);
-}
+        </div>
 
-async function startScan() {
 
-    if (scanning) {
-        return;
-    }
+        <div id="reportText">
 
-    const camera =
-        document.getElementById("camera");
+            <div class="report-empty">
 
-    const status =
-        document.getElementById("scanStatus");
+                No detection has been performed yet.
 
-    const startButton =
-        document.getElementById("startButton");
+            </div>
 
-    const stopButton =
-        document.getElementById("stopButton");
+        </div>
 
-    startButton.disabled = true;
-    stopButton.disabled = false;
+    </div>
 
-    status.innerText =
-        "📷 Starting camera...";
+</section>
 
-    try {
 
-        stream =
-            await navigator.mediaDevices
-                .getUserMedia({
+<!-- =======================================================
+     ABOUT
+======================================================= -->
 
-                    video: {
-                        facingMode: {
-                            ideal: "environment"
-                        }
-                    },
+<section
+    id="about"
+    class="page">
 
-                    audio: false
+    <div class="container">
 
-                });
+        <div class="section-header">
 
-        camera.srcObject = stream;
-        camera.style.display = "block";
+            <h2>
+                About Force X
+            </h2>
 
-        scanning = true;
-        startTime = Date.now();
+            <p>
+                Built to explore and protect
+                the world's wildlife.
+            </p>
 
-        let seconds = 5;
+        </div>
 
-        status.innerText =
-            "🟢 Scanning... 5 seconds";
 
-        timer = setInterval(function() {
+        <div class="about-grid">
 
-            seconds--;
 
-            if (seconds > 0) {
+            <div class="species-card">
 
-                status.innerText =
-                    "🧠 Snow AI scanning... "
-                    + seconds
-                    + " seconds";
+                <div class="species-icon">
+                    🦍
+                </div>
 
-            }
+                <h3>
+                    Bonobo
+                </h3>
 
-            if (seconds === 0) {
+                <p>
 
-                clearInterval(timer);
-                timer = null;
+                    <strong>
+                        Pan paniscus
+                    </strong>
 
-                captureImage();
+                    <br><br>
 
-            }
+                    A great ape native to the
+                    Democratic Republic of the Congo.
 
-        }, 1000);
+                    Snow AI can eventually be
+                    trained to distinguish bonobos
+                    from other primates.
 
-    } catch(error) {
+                </p>
 
-        status.innerText =
-            "❌ Camera could not be started.";
+            </div>
 
-        resetButtons();
 
-        console.log(error);
+            <div class="species-card">
 
-    }
-}
+                <div class="species-icon">
+                    🦒
+                </div>
 
-function captureImage() {
+                <h3>
+                    Okapi
+                </h3>
 
-    const camera =
-        document.getElementById("camera");
+                <p>
 
-    const canvas =
-        document.getElementById("canvas");
+                    <strong>
+                        Okapia johnstoni
+                    </strong>
 
-    const preview =
-        document.getElementById("preview");
+                    <br><br>
 
-    const status =
-        document.getElementById("scanStatus");
+                    A unique giraffid from the
+                    forests of the Democratic
+                    Republic of the Congo.
 
-    if (!camera.videoWidth) {
+                    Its striped legs make it a
+                    distinctive computer-vision target.
 
-        status.innerText =
-            "❌ Camera image unavailable.";
+                </p>
 
-        stopCamera();
-        resetButtons();
+            </div>
 
-        return;
-    }
 
-    canvas.width =
-        camera.videoWidth;
+            <div class="species-card">
 
-    canvas.height =
-        camera.videoHeight;
+                <div class="species-icon">
+                    🐒
+                </div>
 
-    const context =
-        canvas.getContext("2d");
+                <h3>
+                    Likweli
+                </h3>
 
-    context.drawImage(
-        camera,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
+                <p>
 
-    const imageData =
-        canvas.toDataURL(
-            "image/jpeg",
-            0.9
-        );
+                    <strong>
+                        Colobus congoensis
+                    </strong>
 
-    preview.src = imageData;
-    preview.style.display = "block";
+                    <br><br>
 
-    stopCamera();
+                    A recently described African
+                    colobus monkey associated with
+                    forests of the Democratic
+                    Republic of the Congo.
 
-    const duration =
-        ((Date.now() - startTime) / 1000)
-        .toFixed(1);
+                </p>
 
-    const timestamp =
-        new Date().toLocaleString();
+            </div>
 
-    status.innerText =
-        "🔗 Connecting to Snow AI...";
+        </div>
 
-    fetch(
-        "https://force-x-backend.onrender.com/detect",
-        {
-            method: "POST",
 
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
+        <div class="about-description">
 
-            body: JSON.stringify({
+            <strong
+                style="color:var(--green);">
 
-                image: imageData,
+                THE FORCE X MISSION
 
-                timestamp: timestamp,
+            </strong>
 
-                duration: duration
+            <br><br>
 
-            })
-        }
-    )
-    .then(response => {
-
-        if (!response.ok) {
-
-            throw new Error(
-                "Detection request failed"
-            );
-
-        }
-
-        return response.json();
-
-    })
-    .then(data => {
-
-        if (!data.success) {
-
-            throw new Error(
-                data.error ||
-                "Snow AI returned an error."
-            );
-
-        }
-
-        displayResults(data);
-
-        resetButtons();
-
-    })
-    .catch(error => {
-
-        console.log(error);
-
-        status.innerText =
-            "❌ Snow AI could not analyze the image.";
-
-        resetButtons();
-
-    });
-}
-
-function displayResults(data) {
-
-    const status =
-        document.getElementById("scanStatus");
-
-    let html =
-        "<div class='report'>" +
-
-        "<strong>❄️ SNOW AI REPORT</strong>" +
-
-        "<br><br>" +
-
-        "🕒 <strong>Timestamp:</strong><br>" +
-
-        data.timestamp +
-
-        "<br><br>" +
-
-        "⏱️ <strong>Duration:</strong><br>" +
-
-        data.duration +
-
-        " seconds" +
-
-        "<br><br>";
-
-    if (
-        !data.objects ||
-        data.objects.length === 0
-    ) {
-
-        html +=
-            "🔍 <strong>Detection:</strong><br>" +
-            "No objects detected.";
-
-    } else {
-
-        html +=
-            "🔍 <strong>Objects detected:</strong>";
-
-        data.objects.forEach(function(object) {
-
-            html +=
-                "<div class='detection'>" +
-
-                "🔹 <strong>" +
-                object.name +
-                "</strong><br>" +
-
-                "🎯 Confidence: " +
-
-                "<span class='confidence'>" +
-                object.confidence +
-                "</span><br>" +
-
-                "📚 " +
-                object.description +
-
-                "<br>" +
-
-                "<a class='search' " +
-                "href='" +
-                object.google_url +
-                "' " +
-                "target='_blank'>" +
-
-                "🔎 Search Google" +
-
-                "</a>" +
-
-                "</div>";
-
-        });
-
-    }
-
-    html += "</div>";
-
-    document
-        .getElementById("reportText")
-        .innerHTML = html;
-
-    status.innerText =
-        "🟢 Snow AI scan complete";
-
-    showPage("reports");
-}
-
-function stopScan() {
-
-    if (timer) {
-
-        clearInterval(timer);
-        timer = null;
-
-    }
-
-    stopCamera();
-    resetButtons();
-
-    document
-        .getElementById("scanStatus")
-        .innerText =
-        "🟢 Ready to scan";
-}
-
-function stopCamera() {
-
-    if (stream) {
-
-        stream
-            .getTracks()
-            .forEach(function(track) {
-
-                track.stop();
-
-            });
-
-        stream = null;
-    }
-
-    const camera =
-        document.getElementById("camera");
-
-    camera.srcObject = null;
-    camera.style.display = "none";
-
-    scanning = false;
-}
-
-function resetButtons() {
-
-    document
-        .getElementById("startButton")
-        .disabled = false;
-
-    document
-        .getElementById("stopButton")
-        .disabled = true;
-
-    scanning = false;
-}
-
-</script>
-
-</body>
-</html>
-"""
-
-@app.route("/")
-def home():
-
-    return Response(
-        HTML,
-        mimetype="text/html"
-    )
-
-@app.route("/detect", methods=["POST"])
-def detect():
-
-    try:
-
-        data = request.get_json()
-
-        if not data:
-
-            return jsonify({
-                "success": False,
-                "error": "No data received"
-            }), 400
-
-        image_data = data["image"]
-
-        timestamp = data.get(
-            "timestamp",
-            datetime.now().isoformat()
-        )
-
-        duration = data.get(
-            "duration",
-            "0"
-        )
-
-        image_bytes = b64decode(
-            image_data.split(",", 1)[1]
-        )
-
-        frame = cv2.imdecode(
-            np.frombuffer(
-                image_bytes,
-                np.uint8
-            ),
-            cv2.IMREAD_COLOR
-        )
-
-        if frame is None:
-
-            return jsonify({
-                "success": False,
-                "error": "Invalid image"
-            }), 400
-
-        results = model(frame)
-
-        objects = []
-
-        for result in results:
-
-            for box in result.boxes:
-
-                class_id = int(box.cls[0])
-
-                confidence = float(
-                    box.conf[0]
-                )
-
-                object_name = model.names[
-                    class_id
-                ].lower()
-
-                description = object_info.get(
-                    object_name,
-                    "Snow AI detected this object, but a built-in description is not available yet."
-                )
-
-                google_url = (
-                    "https://www.google.com/search?q="
-                    + urllib.parse.quote(
-                        object_name + " information"
-                    )
-                )
-
-                objects.append({
-
-                    "name":
-                        object_name.title(),
-
-                    "confidence":
-                        f"{confidence:.1%}",
-
-                    "description":
-                        description,
-
-                    "google_url":
-                        google_url
-
-                })
-
-        return jsonify({
-
-            "success": True,
-
-            "timestamp":
-                timestamp,
-
-            "duration":
-                duration,
-
-            "objects":
-                objects
-
-        })
-
-    except Exception as error:
-
-        return jsonify({
-
-            "success": False,
-
-            "error":
-                str(error)
-
-        }), 500
-    
-    @app.route("/logo")
-def logo():
-    return send_file("b7077110b14418925995ebc6e641fc8c.png")
-
-if __name__ == "__main__":
-
-    app.run(
-
-        host="0.0.0.0",
-
-        port=int(
-            os.environ.get(
-                "PORT",
-                5000
-            )
-        )
-
-)
+            Force X combines computer vision
+  
