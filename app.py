@@ -339,6 +339,16 @@ h2 {
     box-shadow: 0 0 10px #35ff83;
 }
 
+.gps-status {
+    margin-top: 15px;
+    padding: 12px 15px;
+    border-radius: 14px;
+    background: rgba(53,255,131,0.06);
+    border: 1px solid rgba(53,255,131,0.15);
+    color: #9ee8b8;
+    font-size: 14px;
+}
+
 @media (max-width: 650px) {
 
     nav {
@@ -500,6 +510,12 @@ id="scanStatus"
 class="status">
 🟢 Ready to scan
 </p>
+
+<div
+id="gpsStatus"
+class="gps-status">
+📍 GPS: Waiting for location permission
+</div>
 
 </div>
 
@@ -787,6 +803,7 @@ let stream = null;
 let timer = null;
 let scanning = false;
 let startTime = 0;
+let gpsLocation = null;
 
 function showPage(page) {
 
@@ -803,6 +820,89 @@ function showPage(page) {
         .classList.add("active");
 
     window.scrollTo(0, 0);
+}
+
+function getGPSLocation() {
+
+    const gpsStatus =
+        document.getElementById("gpsStatus");
+
+    return new Promise(function(resolve) {
+
+        if (!navigator.geolocation) {
+
+            gpsStatus.innerText =
+                "❌ GPS: Geolocation is not available.";
+
+            resolve(null);
+
+            return;
+        }
+
+        gpsStatus.innerText =
+            "📍 GPS: Requesting location...";
+
+        navigator.geolocation.getCurrentPosition(
+
+            function(position) {
+
+                gpsLocation = {
+
+                    latitude:
+                        position.coords.latitude,
+
+                    longitude:
+                        position.coords.longitude,
+
+                    accuracy:
+                        position.coords.accuracy
+
+                };
+
+                gpsStatus.innerText =
+                    "🟢 GPS: Location acquired";
+
+                resolve(gpsLocation);
+            },
+
+            function(error) {
+
+                gpsLocation = null;
+
+                if (error.code === 1) {
+
+                    gpsStatus.innerText =
+                        "⚠️ GPS: Location permission denied.";
+
+                } else if (error.code === 2) {
+
+                    gpsStatus.innerText =
+                        "⚠️ GPS: Location unavailable.";
+
+                } else if (error.code === 3) {
+
+                    gpsStatus.innerText =
+                        "⚠️ GPS: Location request timed out.";
+
+                } else {
+
+                    gpsStatus.innerText =
+                        "⚠️ GPS: Could not get location.";
+
+                }
+
+                resolve(null);
+            },
+
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            }
+
+        );
+
+    });
 }
 
 async function startScan() {
@@ -828,6 +928,9 @@ async function startScan() {
 
     status.innerText =
         "📷 Starting camera...";
+
+    const locationPromise =
+        getGPSLocation();
 
     try {
 
@@ -879,6 +982,8 @@ async function startScan() {
             }
 
         }, 1000);
+
+        await locationPromise;
 
     } catch(error) {
 
@@ -970,7 +1075,22 @@ function captureImage() {
 
                 timestamp: timestamp,
 
-                duration: duration
+                duration: duration,
+
+                latitude:
+                    gpsLocation
+                        ? gpsLocation.latitude
+                        : null,
+
+                longitude:
+                    gpsLocation
+                        ? gpsLocation.longitude
+                        : null,
+
+                gps_accuracy:
+                    gpsLocation
+                        ? gpsLocation.accuracy
+                        : null
 
             })
         }
@@ -998,6 +1118,21 @@ function captureImage() {
             );
 
         }
+
+        data.latitude =
+            gpsLocation
+                ? gpsLocation.latitude
+                : null;
+
+        data.longitude =
+            gpsLocation
+                ? gpsLocation.longitude
+                : null;
+
+        data.gps_accuracy =
+            gpsLocation
+                ? gpsLocation.accuracy
+                : null;
 
         displayResults(data);
 
@@ -1041,6 +1176,43 @@ function displayResults(data) {
         " seconds" +
 
         "<br><br>";
+
+    if (
+        data.latitude !== null &&
+        data.longitude !== null
+    ) {
+
+        html +=
+
+            "📍 <strong>GPS Location:</strong><br>" +
+
+            "Latitude: " +
+            data.latitude +
+
+            "<br>" +
+
+            "Longitude: " +
+            data.longitude +
+
+            "<br>" +
+
+            "Accuracy: " +
+            (data.gps_accuracy
+                ? Math.round(data.gps_accuracy)
+                : "Unknown") +
+
+            " metres" +
+
+            "<br><br>";
+
+    } else {
+
+        html +=
+            "📍 <strong>GPS Location:</strong><br>" +
+            "Location unavailable." +
+            "<br><br>";
+
+    }
 
     if (
         !data.objects ||
