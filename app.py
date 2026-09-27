@@ -1,812 +1,626 @@
+from flask import Flask, request, jsonify, Response, send_file
+from flask_cors import CORS
+from ultralytics import YOLO
+from datetime import datetime
+from base64 import b64decode
+import numpy as np
+import cv2
+import urllib.parse
+import os
+
+model = YOLO("yolo11n.pt")
+
+object_info = {
+    "person": "A human being.",
+    "dog": "A domesticated mammal commonly kept as a companion animal.",
+    "cat": "A domesticated mammal commonly kept as a companion animal.",
+    "bird": "A warm-blooded animal with feathers, wings and a beak.",
+    "horse": "A large domesticated mammal commonly used for riding and work.",
+    "cow": "A domesticated mammal commonly raised for milk and meat.",
+    "sheep": "A domesticated mammal commonly raised for wool and meat.",
+    "elephant": "A very large land mammal known for its trunk and tusks.",
+    "bear": "A large mammal belonging to the bear family.",
+    "zebra": "A wild African mammal known for its black-and-white stripes.",
+    "giraffe": "A tall African mammal known for its long neck and legs.",
+    "car": "A motor vehicle mainly designed to transport people.",
+    "bicycle": "A human-powered vehicle with two wheels.",
+    "motorcycle": "A two-wheeled motor vehicle.",
+    "bus": "A large road vehicle designed to transport passengers.",
+    "truck": "A motor vehicle designed mainly for transporting goods.",
+    "laptop": "A portable personal computer.",
+    "cell phone": "A portable electronic device used for communication and digital tasks.",
+    "bottle": "A container commonly used to hold liquids.",
+    "chair": "A piece of furniture designed for one person to sit on.",
+    "backpack": "A bag designed to be carried on a person's back."
+}
+
+app = Flask(__name__)
+
+CORS(
+    app,
+    origins=[
+        "https://force-x.onrender.com",
+        "https://force-x-frontend.onrender.com"
+    ]
+)
+
+HTML = r"""
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Force X | Snow AI</title>
+<title>Force X</title>
 
 <style>
+
 * {
     box-sizing: border-box;
+}
+
+html,
+body {
     margin: 0;
     padding: 0;
-}
-
-:root {
-    --bg: #030806;
-    --panel: rgba(10, 25, 17, .82);
-    --green: #35ff83;
-    --green2: #18c968;
-    --text: #f1fff5;
-    --muted: #9bc8aa;
-    --border: rgba(53,255,131,.18);
-}
-
-html {
-    scroll-behavior: smooth;
+    width: 100%;
+    min-height: 100%;
+    font-family: Arial, sans-serif;
+    background: #050807;
+    color: #ffffff;
 }
 
 body {
-    min-height: 100vh;
-    font-family: Arial, sans-serif;
-    color: var(--text);
     background:
-        radial-gradient(circle at 50% -10%, #174d30 0%, #07140d 35%, var(--bg) 75%);
+        radial-gradient(
+            circle at top,
+            #123b28 0%,
+            #07130d 35%,
+            #050807 75%
+        );
 }
 
-/* NAVIGATION */
-
 nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-
-    min-height: 76px;
-    padding: 10px 24px;
+    width: 100%;
+    min-height: 78px;
+    padding: 10px 22px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    background: rgba(2,8,5,.94);
-    backdrop-filter: blur(14px);
+    background: rgba(3,8,5,0.96);
 
-    border-bottom: 1px solid var(--border);
+    border-bottom:
+        1px solid rgba(48,255,125,0.25);
+
+    box-shadow:
+        0 4px 25px rgba(0,0,0,0.35);
+
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.brand {
+.logo {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-.logo {
-    width: 48px;
-    height: 48px;
+.logo-mark {
+    width: 52px;
+    height: 52px;
 
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    border: 2px solid var(--green);
-    border-radius: 14px;
+    border-radius: 15px;
 
-    color: var(--green);
-    font-size: 22px;
+    background:
+        linear-gradient(
+            135deg,
+            #35ff83,
+            #0b5d31
+        );
+
+    color: #041008;
+
+    font-size: 25px;
     font-weight: 900;
 
     box-shadow:
-        0 0 20px rgba(53,255,131,.2);
+        0 0 20px rgba(53,255,131,0.25);
 }
 
-.brand-name {
-    font-weight: 900;
-    letter-spacing: 3px;
-    color: var(--green);
-}
-
-.brand-sub {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 1px;
+.logo-name {
+    font-size: 19px;
+    font-weight: bold;
+    color: #35ff83;
+    letter-spacing: 2px;
 }
 
 .nav-links {
     display: flex;
-    gap: 8px;
+    align-items: center;
+    gap: 22px;
 }
 
-.nav-links button {
-    background: transparent;
-    color: var(--muted);
-    border: 0;
-    padding: 10px 12px;
-    cursor: pointer;
+.nav-links a {
+    color: #9ee8b8;
+    text-decoration: none;
+    font-size: 14px;
     font-weight: bold;
+    transition: 0.2s;
 }
 
-.nav-links button:hover,
-.nav-links button.active {
-    color: var(--green);
+.nav-links a:hover {
+    color: #35ff83;
 }
-
-/* PAGES */
 
 .page {
+    width: 100%;
+    min-height: calc(100vh - 78px);
     display: none;
-    min-height: calc(100vh - 76px);
-    padding: 45px 18px;
+    padding: 50px 20px;
 }
 
 .page.active {
     display: block;
 }
 
-.container {
-    width: min(1050px, 100%);
+.content {
+    width: 100%;
+    max-width: 900px;
     margin: auto;
 }
 
-/* HOME */
-
 .hero {
-    min-height: 75vh;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     text-align: center;
-}
-
-.hero-inner {
-    max-width: 800px;
-}
-
-.hero-logo {
-    width: 95px;
-    height: 95px;
-
-    margin: 0 auto 25px;
-
-    display: grid;
-    place-items: center;
-
-    border: 3px solid var(--green);
-    border-radius: 28px;
-
-    font-size: 45px;
-    font-weight: 900;
-    color: var(--green);
-
-    box-shadow:
-        0 0 45px rgba(53,255,131,.18);
+    padding: 65px 10px;
 }
 
 h1 {
-    font-size: clamp(50px, 11vw, 105px);
-    letter-spacing: 6px;
-    color: var(--green);
-    margin-bottom: 10px;
+    font-size: clamp(44px, 10vw, 76px);
+    margin: 10px 0;
+    color: #35ff83;
+    letter-spacing: 2px;
 }
 
-.hero-subtitle {
-    color: var(--muted);
-    font-size: clamp(17px, 3vw, 23px);
-    margin-bottom: 35px;
+.subtitle {
+    color: #a8d9b8;
+    font-size: 18px;
 }
-
-.hero-description {
-    max-width: 650px;
-    margin: auto;
-
-    color: #c0ddc9;
-    line-height: 1.8;
-}
-
-/* BUTTONS */
-
-.primary {
-    border: 0;
-    border-radius: 15px;
-
-    padding: 16px 26px;
-    margin-top: 28px;
-
-    background: var(--green);
-    color: #031008;
-
-    font-size: 16px;
-    font-weight: 900;
-
-    cursor: pointer;
-
-    transition: .2s;
-}
-
-.primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(53,255,131,.2);
-}
-
-.secondary {
-    border: 1px solid var(--border);
-    border-radius: 15px;
-
-    padding: 15px 22px;
-    margin: 6px;
-
-    background: rgba(53,255,131,.05);
-    color: var(--green);
-
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.secondary:hover {
-    background: rgba(53,255,131,.12);
-}
-
-/* CARDS */
 
 .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
+    background: rgba(10,30,19,0.78);
+
+    border:
+        1px solid rgba(53,255,131,0.20);
+
     border-radius: 24px;
 
     padding: 25px;
+
     margin-top: 25px;
 
-    box-shadow: 0 15px 45px rgba(0,0,0,.25);
+    box-shadow:
+        0 10px 35px rgba(0,0,0,0.25);
+}
+
+button {
+    border: 1px solid rgba(53,255,131,0.35);
+
+    border-radius: 15px;
+
+    padding: 16px 25px;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    background: #35ff83;
+
+    color: #041008;
+
+    margin: 5px;
+
+    transition: 0.2s;
+}
+
+button:hover {
+    transform: scale(1.02);
+    background: #68ff9e;
+}
+
+button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
 }
 
 h2 {
-    color: var(--green);
-    font-size: 32px;
-    margin-bottom: 8px;
+    font-size: 30px;
+    color: #35ff83;
 }
 
-.section-description {
-    color: var(--muted);
+.info {
+    color: #a8d9b8;
     line-height: 1.7;
-}
-
-/* DETECTION */
-
-.scan-area {
-    text-align: center;
 }
 
 #camera {
     width: 100%;
-    max-height: 560px;
-
-    display: none;
-
-    margin-top: 22px;
-
-    border-radius: 20px;
-    border: 1px solid var(--border);
-
-    background: #000;
-
+    max-height: 500px;
     object-fit: cover;
+    display: none;
+    margin-top: 20px;
+    border-radius: 20px;
+    background: #000000;
+    border: 1px solid rgba(53,255,131,0.25);
 }
 
 #preview {
     width: 100%;
-
     display: none;
-
-    margin-top: 22px;
-
+    margin-top: 20px;
     border-radius: 20px;
-    border: 1px solid var(--border);
-}
-
-#canvas {
-    display: none;
+    border: 1px solid rgba(53,255,131,0.25);
 }
 
 .status {
-    margin-top: 22px;
-
-    color: var(--green);
+    font-size: 18px;
     font-weight: bold;
-
-    min-height: 24px;
+    margin-top: 20px;
+    color: #35ff83;
 }
-
-.progress {
-    width: 100%;
-    height: 6px;
-
-    display: none;
-
-    margin-top: 18px;
-
-    overflow: hidden;
-
-    border-radius: 20px;
-    background: rgba(255,255,255,.08);
-}
-
-.progress-bar {
-    width: 0%;
-    height: 100%;
-
-    background: var(--green);
-
-    transition: width .1s linear;
-}
-
-/* REPORT */
 
 .report {
-    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(53,255,131,0.18);
     border-radius: 18px;
-
     padding: 20px;
-
-    margin-top: 18px;
-
-    background: rgba(0,0,0,.25);
-}
-
-.report-header {
-    color: var(--green);
-    font-size: 20px;
-    font-weight: 900;
+    margin-top: 15px;
+    line-height: 1.7;
 }
 
 .detection {
-    margin-top: 15px;
-
-    padding: 17px;
-
+    background: rgba(53,255,131,0.06);
+    border: 1px solid rgba(53,255,131,0.12);
     border-radius: 15px;
-
-    background: rgba(53,255,131,.05);
-    border: 1px solid rgba(53,255,131,.12);
-}
-
-.detection-name {
-    color: var(--green);
-    font-size: 20px;
-    font-weight: 900;
+    padding: 15px;
+    margin-top: 12px;
 }
 
 .confidence {
-    color: var(--green);
     font-weight: bold;
+    color: #35ff83;
 }
 
-.search-link {
+.search {
     display: inline-block;
-
-    margin-top: 12px;
-    padding: 9px 13px;
-
-    border-radius: 10px;
-
-    background: var(--green);
-    color: #031008;
-
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    background: #35ff83;
+    color: #041008;
     text-decoration: none;
     font-weight: bold;
 }
 
-/* SPECIES */
-
-.species-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-
-    margin-top: 25px;
-}
-
-.species-card {
-    padding: 22px;
-
-    border: 1px solid var(--border);
-    border-radius: 20px;
-
-    background: rgba(10,30,19,.65);
-}
-
-.species-icon {
-    font-size: 42px;
-    margin-bottom: 12px;
-}
-
-.species-card h3 {
-    color: var(--green);
-    margin-bottom: 8px;
-}
-
-.species-card p {
-    color: var(--muted);
-    line-height: 1.6;
-    font-size: 14px;
-}
-
-/* FOOTER */
-
-footer {
+.empty {
     text-align: center;
-    padding: 35px 20px;
-
-    color: #648570;
-    font-size: 13px;
-
-    border-top: 1px solid var(--border);
+    padding: 30px;
+    color: #82ad91;
 }
 
-/* MOBILE */
+.connection {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 15px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    background: rgba(53,255,131,0.08);
+    border: 1px solid rgba(53,255,131,0.15);
+    color: #9ee8b8;
+    font-size: 13px;
+}
 
-@media(max-width: 700px) {
+.dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #35ff83;
+    box-shadow: 0 0 10px #35ff83;
+}
+
+@media (max-width: 650px) {
 
     nav {
+        height: auto;
+        min-height: 78px;
         flex-direction: column;
-        gap: 8px;
-        padding: 10px;
+        gap: 10px;
+        padding: 10px 15px;
+    }
+
+    .logo {
+        width: 100%;
+        justify-content: flex-start;
     }
 
     .nav-links {
         width: 100%;
         justify-content: space-between;
+        gap: 8px;
     }
 
-    .nav-links button {
+    .nav-links a {
         font-size: 11px;
-        padding: 8px 5px;
     }
 
     .page {
-        padding: 30px 14px;
+        padding: 30px 15px;
     }
 
     .hero {
-        min-height: 70vh;
-    }
-
-    .species-grid {
-        grid-template-columns: 1fr;
+        padding: 45px 5px;
     }
 }
+
 </style>
+
 </head>
 
 <body>
 
-<!-- NAVIGATION -->
-
 <nav>
 
-    <div class="brand">
+<div class="logo">
 
-        <div class="logo">X</div>
+<div class="logo-mark">
+FX
+</div>
 
-        <div>
-            <div class="brand-name">FORCE X</div>
-            <div class="brand-sub">POWERED BY SNOW AI</div>
-        </div>
+<span class="logo-name">
+FORCE X
+</span>
 
-    </div>
+</div>
 
-    <div class="nav-links">
+<div class="nav-links">
 
-        <button class="active" onclick="showPage('home', this)">
-            HOME
-        </button>
+<a href="#" onclick="showPage('home'); return false;">
+HOME
+</a>
 
-        <button onclick="showPage('detection', this)">
-            SCAN
-        </button>
+<a href="#" onclick="showPage('detection'); return false;">
+📷 DETECTION
+</a>
 
-        <button onclick="showPage('reports', this)">
-            REPORTS
-        </button>
+<a href="#" onclick="showPage('reports'); return false;">
+📊 REPORTS
+</a>
 
-        <button onclick="showPage('about', this)">
-            ABOUT
-        </button>
+<a href="#" onclick="showPage('about'); return false;">
+ℹ️ ABOUT
+</a>
 
-    </div>
+</div>
 
 </nav>
 
-
-<!-- HOME -->
-
 <section id="home" class="page active">
 
-    <div class="container hero">
+<div class="content">
 
-        <div class="hero-inner">
+<div class="hero">
 
-            <div class="hero-logo">
-                X
-            </div>
+<h1>
+Force X
+</h1>
 
-            <h1>FORCE X</h1>
+<p class="subtitle">
+Intelligent Detection System
+</p>
 
-            <p class="hero-subtitle">
-                Intelligent Species Detection
-            </p>
+<div class="connection">
+<span class="dot"></span>
+Snow AI connection ready
+</div>
 
-            <p class="hero-description">
-                Force X is an experimental computer-vision
-                platform powered by Snow AI. Capture an image
-                and send it to the Snow AI detection system for
-                analysis.
-            </p>
+<div class="card">
 
-            <button
-                class="primary"
-                onclick="openDetection()">
+<p class="info">
+Welcome to Force X — a detection
+system powered by Snow AI,
+designed to identify objects and
+animals using artificial intelligence.
+</p>
 
-                📷 START SCAN
+<button onclick="showPage('detection')">
+📷 START SCAN
+</button>
 
-            </button>
+</div>
 
-        </div>
+</div>
 
-    </div>
+</div>
 
 </section>
-
-
-<!-- DETECTION -->
 
 <section id="detection" class="page">
 
-    <div class="container">
+<div class="content">
 
-        <h2>📷 Snow AI Detection</h2>
+<h2>
+📷 Detection
+</h2>
 
-        <p class="section-description">
-            Start a five-second scan. Your camera image will
-            be captured and sent to the Force X Snow AI backend.
-        </p>
+<div class="card">
 
-        <div class="card scan-area">
+<p class="info">
+Start a five-second Snow AI scan.
+</p>
 
-            <button
-                id="startButton"
-                class="primary"
-                onclick="startScan()">
+<button
+id="startButton"
+onclick="startScan()">
+📷 START SCAN
+</button>
 
-                📷 START SCAN
+<button
+id="stopButton"
+onclick="stopScan()"
+disabled>
+⛔ STOP
+</button>
 
-            </button>
+<video
+id="camera"
+autoplay
+playsinline>
+</video>
 
-            <button
-                id="stopButton"
-                class="secondary"
-                onclick="stopScan()"
-                disabled>
+<canvas
+id="canvas"
+style="display:none;">
+</canvas>
 
-                ⛔ STOP
+<img id="preview">
 
-            </button>
+<p
+id="scanStatus"
+class="status">
+🟢 Ready to scan
+</p>
 
-            <video
-                id="camera"
-                autoplay
-                playsinline>
-            </video>
+</div>
 
-            <canvas id="canvas"></canvas>
-
-            <img
-                id="preview"
-                alt="Captured scan">
-
-            <div class="progress" id="progress">
-
-                <div
-                    class="progress-bar"
-                    id="progressBar">
-                </div>
-
-            </div>
-
-            <div
-                id="scanStatus"
-                class="status">
-
-                🟢 Ready to scan
-
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
 </section>
-
-
-<!-- REPORTS -->
 
 <section id="reports" class="page">
 
-    <div class="container">
+<div class="content">
 
-        <h2>📊 Snow AI Reports</h2>
+<h2>
+📊 Reports
+</h2>
 
-        <p class="section-description">
-            Results returned by the Snow AI detection system.
-        </p>
+<div class="card">
 
-        <div class="card">
+<div
+id="reportText"
+class="info">
 
-            <div id="reportText">
+<div class="empty">
+No detection reports yet.
+</div>
 
-                <p class="section-description">
-                    No detection reports yet.
-                </p>
+</div>
 
-            </div>
+</div>
 
-        </div>
-
-    </div>
+</div>
 
 </section>
-
-
-<!-- ABOUT -->
 
 <section id="about" class="page">
 
-    <div class="container">
+<div class="content">
 
-        <h2>ℹ️ About Force X</h2>
+<h2>
+ℹ️ About Force X
+</h2>
 
-        <div class="card">
+<div class="card">
 
-            <p class="section-description">
+<p class="info">
 
-                Force X is a computer-vision project designed
-                around Snow AI. The goal is to develop a system
-                capable of recognising animals and other objects
-                from images.
+<strong>Force X</strong> is a
+computer-vision platform powered
+by Snow AI.
 
-                <br><br>
+The system captures an image,
+sends it to Snow AI for analysis,
+and displays the resulting
+detection report.
 
-                The project also focuses on species discovery,
-                conservation and the possibility of identifying
-                animals that may be difficult to distinguish
-                using ordinary object-detection systems.
+<br><br>
 
-            </p>
+The project focuses on
+identifying animals and objects
+while supporting future
+conservation and species
+recognition research.
 
-        </div>
+<br><br>
 
+<strong>Current target species:</strong>
 
-        <div class="species-grid">
+<br><br>
 
-            <div class="species-card">
+🦍 <strong>Bonobo — Pan paniscus</strong>
 
-                <div class="species-icon">🦍</div>
+<br><br>
 
-                <h3>Bonobo</h3>
+🦒 <strong>Okapi — Okapia johnstoni</strong>
 
-                <p>
-                    Pan paniscus — a great ape native to the
-                    Democratic Republic of the Congo.
-                </p>
+<br><br>
 
-            </div>
+🐒 <strong>Likweli — Colobus congoensis</strong>
 
+<br><br>
 
-            <div class="species-card">
+Snow AI can be expanded with
+additional training data as the
+Force X project develops.
 
-                <div class="species-icon">🦒</div>
+</p>
 
-                <h3>Okapi</h3>
+</div>
 
-                <p>
-                    Okapia johnstoni — a forest-dwelling giraffid
-                    native to the Democratic Republic of the Congo.
-                </p>
-
-            </div>
-
-
-            <div class="species-card">
-
-                <div class="species-icon">🐒</div>
-
-                <h3>Likweli</h3>
-
-                <p>
-                    Colobus congoensis — a colobus monkey associated
-                    with forests of the Democratic Republic of the Congo.
-                </p>
-
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
 </section>
 
-
-<footer>
-
-    FORCE X • SNOW AI
-
-</footer>
-
-
 <script>
-
-/*
-==================================================
-FORCE X FRONTEND
-SNOW AI BACKEND CONNECTION
-==================================================
-*/
-
-const SNOW_AI_API =
-    "https://force-x-backend.onrender.com/detect";
-
 
 let stream = null;
 let timer = null;
 let scanning = false;
 let startTime = 0;
 
-
-/* PAGE NAVIGATION */
-
-function showPage(pageId, clickedButton = null) {
+function showPage(page) {
 
     document
         .querySelectorAll(".page")
-        .forEach(page => {
+        .forEach(function(section) {
 
-            page.classList.remove("active");
+            section.classList.remove("active");
 
         });
-
-
-    const page =
-        document.getElementById(pageId);
-
-    if (page) {
-        page.classList.add("active");
-    }
-
 
     document
-        .querySelectorAll(".nav-links button")
-        .forEach(button => {
+        .getElementById(page)
+        .classList.add("active");
 
-            button.classList.remove("active");
-
-        });
-
-
-    if (clickedButton) {
-        clickedButton.classList.add("active");
-    }
-
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    window.scrollTo(0, 0);
 }
-
-
-function openDetection() {
-
-    const scanButton =
-        document.querySelector(
-            ".nav-links button:nth-child(2)"
-        );
-
-    showPage(
-        "detection",
-        scanButton
-    );
-
-}
-
-
-/* START SCAN */
 
 async function startScan() {
 
     if (scanning) {
         return;
     }
-
 
     const camera =
         document.getElementById("camera");
@@ -820,116 +634,73 @@ async function startScan() {
     const stopButton =
         document.getElementById("stopButton");
 
-    const progress =
-        document.getElementById("progress");
-
-    const progressBar =
-        document.getElementById("progressBar");
-
-
     startButton.disabled = true;
     stopButton.disabled = false;
-
 
     status.innerText =
         "📷 Starting camera...";
 
-
     try {
 
         stream =
-            await navigator.mediaDevices.getUserMedia({
+            await navigator.mediaDevices
+                .getUserMedia({
 
-                video: {
-                    facingMode: {
-                        ideal: "environment"
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
                     },
 
-                    width: {
-                        ideal: 1280
-                    },
+                    audio: false
 
-                    height: {
-                        ideal: 720
-                    }
-                },
-
-                audio: false
-
-            });
-
+                });
 
         camera.srcObject = stream;
-
         camera.style.display = "block";
 
         scanning = true;
-
         startTime = Date.now();
 
-
-        progress.style.display = "block";
-
-        progressBar.style.width = "0%";
-
-
         let seconds = 5;
-
 
         status.innerText =
             "🟢 Scanning... 5 seconds";
 
+        timer = setInterval(function() {
 
-        timer =
-            setInterval(() => {
+            seconds--;
 
-                seconds--;
+            if (seconds > 0) {
 
-                const percent =
-                    ((5 - seconds) / 5) * 100;
+                status.innerText =
+                    "🧠 Snow AI scanning... "
+                    + seconds
+                    + " seconds";
 
-                progressBar.style.width =
-                    percent + "%";
+            }
 
+            if (seconds === 0) {
 
-                if (seconds > 0) {
+                clearInterval(timer);
+                timer = null;
 
-                    status.innerText =
-                        "🧠 Snow AI scanning... "
-                        + seconds
-                        + " seconds";
+                captureImage();
 
-                }
+            }
 
+        }, 1000);
 
-                if (seconds === 0) {
+    } catch(error) {
 
-                    clearInterval(timer);
-
-                    timer = null;
-
-                    captureImage();
-
-                }
-
-            }, 1000);
-
-
-    } catch (error) {
-
-        console.error(error);
+        console.log(error);
 
         status.innerText =
-            "❌ Camera permission was denied or the camera is unavailable.";
+            "❌ Camera could not be started.";
 
         resetButtons();
-
     }
-
 }
-
-
-/* CAPTURE IMAGE */
 
 function captureImage() {
 
@@ -945,20 +716,16 @@ function captureImage() {
     const status =
         document.getElementById("scanStatus");
 
-
     if (!camera.videoWidth) {
 
         status.innerText =
             "❌ Camera image unavailable.";
 
         stopCamera();
-
         resetButtons();
 
         return;
-
     }
-
 
     canvas.width =
         camera.videoWidth;
@@ -966,10 +733,8 @@ function captureImage() {
     canvas.height =
         camera.videoHeight;
 
-
     const context =
         canvas.getContext("2d");
-
 
     context.drawImage(
         camera,
@@ -979,49 +744,30 @@ function captureImage() {
         canvas.height
     );
 
-
     const imageData =
         canvas.toDataURL(
             "image/jpeg",
             0.9
         );
 
-
-    preview.src =
-        imageData;
-
-    preview.style.display =
-        "block";
-
+    preview.src = imageData;
+    preview.style.display = "block";
 
     stopCamera();
 
-
     const duration =
-        (
-            (Date.now() - startTime)
-            / 1000
-        ).toFixed(1);
-
+        ((Date.now() - startTime) / 1000)
+        .toFixed(1);
 
     const timestamp =
         new Date().toLocaleString();
 
-
     status.innerText =
         "🔗 Connecting to Snow AI...";
 
-
-    /*
-    ==========================================
-    THIS IS THE IMPORTANT CONNECTION
-    ==========================================
-    */
-
     fetch(
-        SNOW_AI_API,
+        "https://force-x-backend.onrender.com/detect",
         {
-
             method: "POST",
 
             headers: {
@@ -1038,17 +784,14 @@ function captureImage() {
                 duration: duration
 
             })
-
         }
     )
-
     .then(response => {
 
         if (!response.ok) {
 
             throw new Error(
-                "Backend returned HTTP "
-                + response.status
+                "Detection request failed"
             );
 
         }
@@ -1056,14 +799,7 @@ function captureImage() {
         return response.json();
 
     })
-
     .then(data => {
-
-        console.log(
-            "Snow AI response:",
-            data
-        );
-
 
         if (!data.success) {
 
@@ -1074,20 +810,14 @@ function captureImage() {
 
         }
 
-
         displayResults(data);
 
         resetButtons();
 
     })
-
     .catch(error => {
 
-        console.error(
-            "Snow AI error:",
-            error
-        );
-
+        console.log(error);
 
         status.innerText =
             "❌ Snow AI could not analyze the image.";
@@ -1095,131 +825,337 @@ function captureImage() {
         resetButtons();
 
     });
-
 }
-
-
-/* DISPLAY RESULTS */
 
 function displayResults(data) {
 
     const status =
-        document.getElementById(
-            "scanStatus"
-        );
+        document.getElementById("scanStatus");
 
-    const reportText =
-        document.getElementById(
-            "reportText"
-        );
+    let html =
+        "<div class='report'>" +
 
+        "<strong>❄️ SNOW AI REPORT</strong>" +
 
-    let html = `
+        "<br><br>" +
 
-        <div class="report">
+        "🕒 <strong>Timestamp:</strong><br>" +
 
-            <div class="report-header">
-                ❄️ SNOW AI REPORT
-            </div>
+        (data.timestamp || "Unknown") +
 
-            <br>
+        "<br><br>" +
 
-            🕒 <strong>Timestamp</strong><br>
-            ${escapeHTML(data.timestamp || "Unknown")}
+        "⏱️ <strong>Duration:</strong><br>" +
 
-            <br><br>
+        (data.duration || "Unknown") +
 
-            ⏱️ <strong>Scan duration</strong><br>
-            ${escapeHTML(data.duration || "Unknown")}
-            seconds
+        " seconds" +
 
-    `;
-
+        "<br><br>";
 
     if (
         !data.objects ||
         data.objects.length === 0
     ) {
 
-        html += `
-
-            <div class="detection">
-
-                🔍 <strong>No objects detected.</strong>
-
-                <br><br>
-
-                Snow AI did not find a recognised
-                object in this scan.
-
-            </div>
-
-        `;
+        html +=
+            "🔍 <strong>Detection:</strong><br>" +
+            "No objects detected.";
 
     } else {
 
-        html += `
+        html +=
+            "🔍 <strong>Objects detected:</strong>";
 
-            <br><br>
-
-            🔍 <strong>
-            Objects detected:
-            </strong>
-
-        `;
-
-
-        data.objects.forEach(object => {
+        data.objects.forEach(function(object) {
 
             const name =
-                object.name ||
-                "Unknown object";
-
+                object.name || "Unknown";
 
             const confidence =
-                object.confidence ||
-                "Unknown";
-
+                object.confidence || "Unknown";
 
             const description =
                 object.description ||
                 "No description available.";
 
-
-            const googleURL =
+            const googleUrl =
                 object.google_url ||
-                (
+                "https://www.google.com/search?q="
+                + encodeURIComponent(name);
+
+            html +=
+
+                "<div class='detection'>" +
+
+                "🔹 <strong>" +
+                name +
+                "</strong><br>" +
+
+                "🎯 Confidence: " +
+
+                "<span class='confidence'>" +
+                confidence +
+                "</span><br>" +
+
+                "📚 " +
+                description +
+
+                "<br>" +
+
+                "<a class='search' " +
+                "href='" +
+                googleUrl +
+                "' " +
+                "target='_blank'>" +
+
+                "🔎 Search Google" +
+
+                "</a>" +
+
+                "</div>";
+
+        });
+
+    }
+
+    html += "</div>";
+
+    document
+        .getElementById("reportText")
+        .innerHTML = html;
+
+    status.innerText =
+        "🟢 Snow AI scan complete";
+
+    showPage("reports");
+}
+
+function stopScan() {
+
+    if (timer) {
+
+        clearInterval(timer);
+        timer = null;
+
+    }
+
+    stopCamera();
+
+    scanning = false;
+
+    resetButtons();
+
+    document
+        .getElementById("scanStatus")
+        .innerText =
+        "🟡 Scan stopped";
+}
+
+function stopCamera() {
+
+    if (stream) {
+
+        stream
+            .getTracks()
+            .forEach(function(track) {
+
+                track.stop();
+
+            });
+
+        stream = null;
+    }
+
+    const camera =
+        document.getElementById("camera");
+
+    camera.srcObject = null;
+    camera.style.display = "none";
+}
+
+function resetButtons() {
+
+    scanning = false;
+
+    const startButton =
+        document.getElementById("startButton");
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+    startButton.disabled = false;
+    stopButton.disabled = true;
+}
+
+window.addEventListener(
+    "beforeunload",
+    function() {
+
+        if (timer) {
+
+            clearInterval(timer);
+
+        }
+
+        stopCamera();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>
+"""
+
+@app.route("/")
+def home():
+    return Response(HTML, mimetype="text/html")
+
+
+@app.route("/health")
+def health():
+    return jsonify({
+        "status": "online",
+        "service": "Force X",
+        "snow_ai": "connected"
+    })
+
+
+@app.route("/detect", methods=["POST"])
+def detect():
+
+    try:
+
+        data = request.get_json()
+
+        if not data or "image" not in data:
+
+            return jsonify({
+                "success": False,
+                "error": "No image received."
+            }), 400
+
+        image_data = data["image"]
+
+        if "," in image_data:
+
+            image_data = image_data.split(",", 1)[1]
+
+        image_bytes = b64decode(image_data)
+
+        array = np.frombuffer(
+            image_bytes,
+            dtype=np.uint8
+        )
+
+        image = cv2.imdecode(
+            array,
+            cv2.IMREAD_COLOR
+        )
+
+        if image is None:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid image."
+            }), 400
+
+        results = model(image)
+
+        objects = []
+
+        for result in results:
+
+            for box in result.boxes:
+
+                confidence = float(
+                    box.conf[0]
+                )
+
+                class_id = int(
+                    box.cls[0]
+                )
+
+                name = model.names[class_id]
+
+                description = object_info.get(
+                    name,
+                    "Snow AI detected this object."
+                )
+
+                google_url = (
                     "https://www.google.com/search?q="
-                    +
-                    encodeURIComponent(name)
-                );
+                    + urllib.parse.quote(name)
+                )
+
+                objects.append({
+
+                    "name": name,
+
+                    "confidence":
+                        f"{confidence * 100:.1f}%",
+
+                    "description":
+                        description,
+
+                    "google_url":
+                        google_url
+                })
+
+        timestamp = data.get(
+            "timestamp",
+            datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+        )
+
+        duration = data.get(
+            "duration",
+            "Unknown"
+        )
+
+        return jsonify({
+
+            "success": True,
+
+            "timestamp":
+                timestamp,
+
+            "duration":
+                duration,
+
+            "objects":
+                objects
+
+        })
+
+    except Exception as error:
+
+        print("Detection error:", error)
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Snow AI could not process the image."
+
+        }), 500
 
 
-            html += `
+if __name__ == "__main__":
 
-                <div class="detection">
+    port = int(
+        os.environ.get(
+            "PORT",
+            10000
+        )
+    )
 
-                    <div class="detection-name">
-                        🔹 ${escapeHTML(name)}
-                    </div>
-
-                    <br>
-
-                    🎯 Confidence:
-
-                    <span class="confidence">
-                        ${escapeHTML(confidence)}
-                    </span>
-
-                    <br><br>
-
-                    📚
-                    ${escapeHTML(description)}
-
-                    <br>
-
-                    <a
-                        class="search-link"
-                        href="${escapeAttribute(googleURL)}"
-                        target="_blank"
-                        rel="noopener noreferrer">
+    app.run(
+        host="0.0.0.0",
+        port=port
+)
