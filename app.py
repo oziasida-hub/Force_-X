@@ -1,25 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0">
-
-<title>FORCE X — Snow AI</title>
+<title>Force X | Snow AI</title>
 
 <style>
-
-/* =========================================================
-   FORCE X — SNOW AI INTERFACE
-   Frontend only
-   Backend connection:
-   https://force-x-backend.onrender.com/detect
-========================================================= */
-
 * {
     box-sizing: border-box;
     margin: 0;
@@ -27,15 +14,13 @@
 }
 
 :root {
-    --bg: #030706;
-    --panel: #07120d;
-    --panel2: #0b1c13;
-    --green: #38ff88;
-    --green2: #1bd66b;
-    --text: #f3fff7;
-    --muted: #8eaa9a;
-    --border: rgba(56,255,136,0.16);
-    --danger: #ff5d68;
+    --bg: #030806;
+    --panel: rgba(10, 25, 17, .82);
+    --green: #35ff83;
+    --green2: #18c968;
+    --text: #f1fff5;
+    --muted: #9bc8aa;
+    --border: rgba(53,255,131,.18);
 }
 
 html {
@@ -44,113 +29,80 @@ html {
 
 body {
     min-height: 100vh;
-    background:
-        radial-gradient(
-            circle at 50% -10%,
-            rgba(28,120,70,0.35),
-            transparent 42%
-        ),
-        radial-gradient(
-            circle at 100% 80%,
-            rgba(20,90,55,0.15),
-            transparent 35%
-        ),
-        var(--bg);
-
+    font-family: Arial, sans-serif;
     color: var(--text);
-    font-family:
-        Inter,
-        Arial,
-        Helvetica,
-        sans-serif;
+    background:
+        radial-gradient(circle at 50% -10%, #174d30 0%, #07140d 35%, var(--bg) 75%);
 }
 
-/* =========================================================
-   NAVIGATION
-========================================================= */
+/* NAVIGATION */
 
-.navbar {
+nav {
     position: sticky;
     top: 0;
     z-index: 100;
 
-    width: 100%;
+    min-height: 76px;
+    padding: 10px 24px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    padding: 15px 5%;
+    background: rgba(2,8,5,.94);
+    backdrop-filter: blur(14px);
 
-    background:
-        rgba(3,7,6,0.88);
-
-    backdrop-filter: blur(18px);
-
-    border-bottom:
-        1px solid var(--border);
+    border-bottom: 1px solid var(--border);
 }
-
-/* Custom Force X logo */
 
 .brand {
     display: flex;
     align-items: center;
     gap: 12px;
-
-    cursor: pointer;
 }
 
-.logo-mark {
-    width: 42px;
-    height: 42px;
+.logo {
+    width: 48px;
+    height: 48px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: grid;
+    place-items: center;
 
     border: 2px solid var(--green);
-
-    border-radius: 12px;
+    border-radius: 14px;
 
     color: var(--green);
-
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 900;
 
     box-shadow:
-        0 0 18px rgba(56,255,136,0.18);
-
-    transform: skew(-8deg);
+        0 0 20px rgba(53,255,131,.2);
 }
 
-.brand-text {
-    font-size: 18px;
+.brand-name {
     font-weight: 900;
     letter-spacing: 3px;
+    color: var(--green);
 }
 
-.brand-text span {
-    color: var(--green);
+.brand-sub {
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
 }
 
 .nav-links {
     display: flex;
-    gap: 25px;
+    gap: 8px;
 }
 
 .nav-links button {
-    border: none;
     background: transparent;
-
     color: var(--muted);
-
-    font-size: 13px;
-    font-weight: 700;
-
+    border: 0;
+    padding: 10px 12px;
     cursor: pointer;
-
-    transition: 0.2s;
+    font-weight: bold;
 }
 
 .nav-links button:hover,
@@ -158,17 +110,12 @@ body {
     color: var(--green);
 }
 
-/* =========================================================
-   PAGE SYSTEM
-========================================================= */
+/* PAGES */
 
 .page {
     display: none;
-
-    width: 100%;
-    min-height: calc(100vh - 72px);
-
-    padding: 60px 5%;
+    min-height: calc(100vh - 76px);
+    padding: 45px 18px;
 }
 
 .page.active {
@@ -176,725 +123,373 @@ body {
 }
 
 .container {
-    width: 100%;
-    max-width: 1100px;
-
+    width: min(1050px, 100%);
     margin: auto;
 }
 
-/* =========================================================
-   HERO
-========================================================= */
+/* HOME */
 
 .hero {
     min-height: 75vh;
 
     display: flex;
-    flex-direction: column;
-
     align-items: center;
     justify-content: center;
 
     text-align: center;
 }
 
-.status-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-
-    padding: 8px 14px;
-
-    border: 1px solid var(--border);
-    border-radius: 50px;
-
-    background: rgba(56,255,136,0.05);
-
-    color: var(--green);
-
-    font-size: 12px;
-    font-weight: 700;
-
-    letter-spacing: 1px;
-
-    margin-bottom: 25px;
+.hero-inner {
+    max-width: 800px;
 }
 
-.status-dot {
-    width: 7px;
-    height: 7px;
+.hero-logo {
+    width: 95px;
+    height: 95px;
 
-    border-radius: 50%;
+    margin: 0 auto 25px;
 
-    background: var(--green);
+    display: grid;
+    place-items: center;
+
+    border: 3px solid var(--green);
+    border-radius: 28px;
+
+    font-size: 45px;
+    font-weight: 900;
+    color: var(--green);
 
     box-shadow:
-        0 0 10px var(--green);
+        0 0 45px rgba(53,255,131,.18);
 }
 
-.hero h1 {
-    font-size: clamp(55px, 12vw, 115px);
-
-    line-height: 0.95;
-
-    letter-spacing: -5px;
-
-    margin-bottom: 20px;
-}
-
-.hero h1 span {
+h1 {
+    font-size: clamp(50px, 11vw, 105px);
+    letter-spacing: 6px;
     color: var(--green);
-
-    text-shadow:
-        0 0 40px rgba(56,255,136,0.2);
+    margin-bottom: 10px;
 }
 
-.hero p {
-    max-width: 650px;
-
+.hero-subtitle {
     color: var(--muted);
-
-    font-size: 17px;
-
-    line-height: 1.7;
-
+    font-size: clamp(17px, 3vw, 23px);
     margin-bottom: 35px;
 }
 
-.primary-btn {
-    border: none;
+.hero-description {
+    max-width: 650px;
+    margin: auto;
 
-    padding: 16px 28px;
+    color: #c0ddc9;
+    line-height: 1.8;
+}
 
-    border-radius: 14px;
+/* BUTTONS */
+
+.primary {
+    border: 0;
+    border-radius: 15px;
+
+    padding: 16px 26px;
+    margin-top: 28px;
 
     background: var(--green);
+    color: #031008;
 
-    color: #021007;
-
-    font-size: 15px;
+    font-size: 16px;
     font-weight: 900;
 
     cursor: pointer;
 
-    box-shadow:
-        0 10px 35px rgba(56,255,136,0.15);
-
-    transition: 0.2s;
+    transition: .2s;
 }
 
-.primary-btn:hover {
+.primary:hover {
     transform: translateY(-2px);
-
-    box-shadow:
-        0 15px 40px rgba(56,255,136,0.25);
+    box-shadow: 0 10px 30px rgba(53,255,131,.2);
 }
 
-.secondary-btn {
+.secondary {
     border: 1px solid var(--border);
+    border-radius: 15px;
 
-    padding: 15px 25px;
+    padding: 15px 22px;
+    margin: 6px;
 
-    border-radius: 14px;
+    background: rgba(53,255,131,.05);
+    color: var(--green);
 
-    background: rgba(255,255,255,0.02);
-
-    color: var(--text);
-
-    font-weight: 700;
-
+    font-weight: bold;
     cursor: pointer;
-
-    transition: 0.2s;
 }
 
-.secondary-btn:hover {
-    border-color: rgba(56,255,136,0.4);
+.secondary:hover {
+    background: rgba(53,255,131,.12);
 }
 
-/* =========================================================
-   SECTION HEADERS
-========================================================= */
+/* CARDS */
 
-.section-header {
-    margin-bottom: 30px;
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+
+    padding: 25px;
+    margin-top: 25px;
+
+    box-shadow: 0 15px 45px rgba(0,0,0,.25);
 }
 
-.section-header h2 {
-    font-size: 38px;
-
+h2 {
+    color: var(--green);
+    font-size: 32px;
     margin-bottom: 8px;
 }
 
-.section-header p {
+.section-description {
     color: var(--muted);
+    line-height: 1.7;
 }
 
-/* =========================================================
-   DETECTION PANEL
-========================================================= */
+/* DETECTION */
 
-.scanner {
-    display: grid;
-
-    grid-template-columns:
-        minmax(0, 1.4fr)
-        minmax(280px, 0.6fr);
-
-    gap: 20px;
-}
-
-.camera-panel,
-.control-panel {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(11,28,19,0.95),
-            rgba(4,12,8,0.95)
-        );
-
-    border: 1px solid var(--border);
-
-    border-radius: 24px;
-
-    padding: 20px;
-}
-
-/* Camera */
-
-.camera-container {
-    position: relative;
-
-    width: 100%;
-
-    min-height: 450px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    overflow: hidden;
-
-    border-radius: 18px;
-
-    background:
-        radial-gradient(
-            circle,
-            #0d2116,
-            #020504
-        );
-
-    border: 1px solid rgba(56,255,136,0.1);
+.scan-area {
+    text-align: center;
 }
 
 #camera {
     width: 100%;
-    height: 100%;
-
-    min-height: 450px;
-
-    object-fit: cover;
-
-    display: none;
-}
-
-.camera-placeholder {
-    text-align: center;
-
-    color: var(--muted);
-}
-
-.camera-icon {
-    font-size: 55px;
-
-    margin-bottom: 15px;
-
-    opacity: 0.7;
-}
-
-/* Scanner corners */
-
-.scan-corners {
-    position: absolute;
-
-    inset: 25px;
-
-    pointer-events: none;
-
-    display: none;
-}
-
-.scan-corners::before,
-.scan-corners::after {
-    content: "";
-
-    position: absolute;
-
-    width: 45px;
-    height: 45px;
-
-    border-color: var(--green);
-    border-style: solid;
-}
-
-.scan-corners::before {
-    top: 0;
-    left: 0;
-
-    border-width: 3px 0 0 3px;
-}
-
-.scan-corners::after {
-    bottom: 0;
-    right: 0;
-
-    border-width: 0 3px 3px 0;
-}
-
-/* scanning animation */
-
-.scanning-line {
-    position: absolute;
-
-    left: 5%;
-    right: 5%;
-
-    top: 10%;
-
-    height: 2px;
-
-    background: var(--green);
-
-    box-shadow:
-        0 0 15px var(--green),
-        0 0 30px var(--green);
+    max-height: 560px;
 
     display: none;
 
-    animation:
-        scanLine 2s linear infinite;
-}
+    margin-top: 22px;
 
-@keyframes scanLine {
-
-    0% {
-        top: 10%;
-    }
-
-    50% {
-        top: 90%;
-    }
-
-    100% {
-        top: 10%;
-    }
-
-}
-
-/* Controls */
-
-.control-panel h3 {
-    margin-bottom: 10px;
-}
-
-.control-panel p {
-    color: var(--muted);
-
-    line-height: 1.6;
-
-    font-size: 14px;
-
-    margin-bottom: 25px;
-}
-
-.control-buttons {
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-}
-
-.control-buttons button {
-    width: 100%;
-}
-
-#stopButton {
-    background: rgba(255,93,104,0.08);
-
-    border: 1px solid rgba(255,93,104,0.2);
-
-    color: var(--danger);
-}
-
-#stopButton:hover {
-    background: rgba(255,93,104,0.15);
-}
-
-.scan-status {
-    margin-top: 25px;
-
-    padding: 15px;
-
-    border-radius: 14px;
-
-    background: rgba(0,0,0,0.25);
-
+    border-radius: 20px;
     border: 1px solid var(--border);
 
-    color: var(--green);
+    background: #000;
 
-    font-size: 13px;
-
-    line-height: 1.5;
+    object-fit: cover;
 }
-
-/* =========================================================
-   PREVIEW
-========================================================= */
 
 #preview {
     width: 100%;
 
-    margin-top: 15px;
+    display: none;
+
+    margin-top: 22px;
+
+    border-radius: 20px;
+    border: 1px solid var(--border);
+}
+
+#canvas {
+    display: none;
+}
+
+.status {
+    margin-top: 22px;
+
+    color: var(--green);
+    font-weight: bold;
+
+    min-height: 24px;
+}
+
+.progress {
+    width: 100%;
+    height: 6px;
 
     display: none;
 
-    border-radius: 18px;
+    margin-top: 18px;
 
-    border: 1px solid var(--border);
+    overflow: hidden;
+
+    border-radius: 20px;
+    background: rgba(255,255,255,.08);
 }
 
-/* =========================================================
-   REPORTS
-========================================================= */
+.progress-bar {
+    width: 0%;
+    height: 100%;
 
-.report-empty {
-    padding: 70px 20px;
+    background: var(--green);
 
-    text-align: center;
-
-    border:
-        1px dashed
-        rgba(56,255,136,0.15);
-
-    border-radius: 22px;
-
-    color: var(--muted);
+    transition: width .1s linear;
 }
+
+/* REPORT */
 
 .report {
-    background:
-        linear-gradient(
-            145deg,
-            rgba(11,28,19,0.95),
-            rgba(4,12,8,0.95)
-        );
-
     border: 1px solid var(--border);
+    border-radius: 18px;
 
-    border-radius: 24px;
+    padding: 20px;
 
-    padding: 25px;
+    margin-top: 18px;
+
+    background: rgba(0,0,0,.25);
 }
 
 .report-header {
-    display: flex;
-
-    justify-content: space-between;
-
-    gap: 20px;
-
-    flex-wrap: wrap;
-
-    padding-bottom: 20px;
-
-    border-bottom: 1px solid var(--border);
-
-    margin-bottom: 20px;
-}
-
-.report-title {
     color: var(--green);
-
     font-size: 20px;
-
     font-weight: 900;
-}
-
-.report-meta {
-    color: var(--muted);
-
-    font-size: 13px;
 }
 
 .detection {
-    padding: 20px;
+    margin-top: 15px;
 
-    margin-top: 12px;
+    padding: 17px;
 
-    border-radius: 18px;
+    border-radius: 15px;
 
-    background:
-        rgba(56,255,136,0.035);
-
-    border: 1px solid rgba(56,255,136,0.12);
+    background: rgba(53,255,131,.05);
+    border: 1px solid rgba(53,255,131,.12);
 }
 
 .detection-name {
-    font-size: 22px;
-
+    color: var(--green);
+    font-size: 20px;
     font-weight: 900;
-
-    margin-bottom: 8px;
 }
 
 .confidence {
     color: var(--green);
-
-    font-weight: 900;
+    font-weight: bold;
 }
 
-.detection-description {
-    color: var(--muted);
-
-    line-height: 1.6;
-
-    margin-top: 10px;
-}
-
-.google-link {
+.search-link {
     display: inline-block;
 
-    margin-top: 15px;
-
+    margin-top: 12px;
     padding: 9px 13px;
 
     border-radius: 10px;
 
-    background: rgba(56,255,136,0.08);
-
-    border: 1px solid var(--border);
-
-    color: var(--green);
+    background: var(--green);
+    color: #031008;
 
     text-decoration: none;
-
-    font-size: 12px;
-
-    font-weight: 700;
+    font-weight: bold;
 }
 
-/* =========================================================
-   ABOUT
-========================================================= */
+/* SPECIES */
 
-.about-grid {
+.species-grid {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
 
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 15px;
+    margin-top: 25px;
 }
 
 .species-card {
-    padding: 25px;
-
-    border-radius: 20px;
-
-    background:
-        rgba(8,22,15,0.8);
+    padding: 22px;
 
     border: 1px solid var(--border);
+    border-radius: 20px;
 
-    transition: 0.2s;
-}
-
-.species-card:hover {
-    transform: translateY(-4px);
-
-    border-color:
-        rgba(56,255,136,0.35);
+    background: rgba(10,30,19,.65);
 }
 
 .species-icon {
-    font-size: 40px;
-
-    margin-bottom: 15px;
+    font-size: 42px;
+    margin-bottom: 12px;
 }
 
 .species-card h3 {
     color: var(--green);
-
     margin-bottom: 8px;
 }
 
 .species-card p {
     color: var(--muted);
-
     line-height: 1.6;
-
     font-size: 14px;
 }
 
-.about-description {
-    margin-top: 25px;
+/* FOOTER */
 
-    padding: 25px;
+footer {
+    text-align: center;
+    padding: 35px 20px;
 
-    border-radius: 20px;
+    color: #648570;
+    font-size: 13px;
 
-    background:
-        rgba(8,22,15,0.8);
-
-    border: 1px solid var(--border);
-
-    color: var(--muted);
-
-    line-height: 1.8;
+    border-top: 1px solid var(--border);
 }
 
-/* =========================================================
-   LOADING
-========================================================= */
+/* MOBILE */
 
-.loading {
-    display: inline-block;
+@media(max-width: 700px) {
 
-    width: 15px;
-    height: 15px;
-
-    border: 2px solid rgba(56,255,136,0.2);
-
-    border-top-color: var(--green);
-
-    border-radius: 50%;
-
-    animation:
-        spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-
-    to {
-        transform: rotate(360deg);
-    }
-
-}
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 800px) {
-
-    .navbar {
-        padding: 12px 18px;
+    nav {
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px;
     }
 
     .nav-links {
-        gap: 10px;
+        width: 100%;
+        justify-content: space-between;
     }
 
     .nav-links button {
         font-size: 11px;
-    }
-
-    .brand-text {
-        display: none;
-    }
-
-    .scanner {
-        grid-template-columns: 1fr;
-    }
-
-    .camera-container,
-    #camera {
-        min-height: 350px;
-    }
-
-    .about-grid {
-        grid-template-columns: 1fr;
+        padding: 8px 5px;
     }
 
     .page {
-        padding: 40px 18px;
+        padding: 30px 14px;
     }
 
+    .hero {
+        min-height: 70vh;
+    }
+
+    .species-grid {
+        grid-template-columns: 1fr;
+    }
 }
-
-@media (max-width: 500px) {
-
-    .navbar {
-        align-items: center;
-    }
-
-    .nav-links {
-        gap: 5px;
-    }
-
-    .nav-links button {
-        padding: 5px;
-        font-size: 10px;
-    }
-
-    .hero h1 {
-        letter-spacing: -3px;
-    }
-
-}
-
 </style>
-
 </head>
 
 <body>
 
-<!-- =======================================================
-     NAVIGATION
-======================================================= -->
+<!-- NAVIGATION -->
 
-<nav class="navbar">
+<nav>
 
-    <div
-        class="brand"
-        onclick="showPage('home')">
+    <div class="brand">
 
-        <div class="logo-mark">
-            X
-        </div>
+        <div class="logo">X</div>
 
-        <div class="brand-text">
-            FORCE <span>X</span>
+        <div>
+            <div class="brand-name">FORCE X</div>
+            <div class="brand-sub">POWERED BY SNOW AI</div>
         </div>
 
     </div>
 
     <div class="nav-links">
 
-        <button
-            id="nav-home"
-            class="active"
-            onclick="showPage('home')">
+        <button class="active" onclick="showPage('home', this)">
             HOME
         </button>
 
-        <button
-            id="nav-detection"
-            onclick="showPage('detection')">
+        <button onclick="showPage('detection', this)">
             SCAN
         </button>
 
-        <button
-            id="nav-reports"
-            onclick="showPage('reports')">
+        <button onclick="showPage('reports', this)">
             REPORTS
         </button>
 
-        <button
-            id="nav-about"
-            onclick="showPage('about')">
+        <button onclick="showPage('about', this)">
             ABOUT
         </button>
 
@@ -903,45 +498,36 @@ body {
 </nav>
 
 
-<!-- =======================================================
-     HOME
-======================================================= -->
+<!-- HOME -->
 
-<section
-    id="home"
-    class="page active">
+<section id="home" class="page active">
 
-    <div class="container">
+    <div class="container hero">
 
-        <div class="hero">
+        <div class="hero-inner">
 
-            <div class="status-pill">
-
-                <span class="status-dot"></span>
-
-                SNOW AI ONLINE
-
+            <div class="hero-logo">
+                X
             </div>
 
-            <h1>
-                FORCE <span>X</span>
-            </h1>
+            <h1>FORCE X</h1>
 
-            <p>
+            <p class="hero-subtitle">
+                Intelligent Species Detection
+            </p>
 
-                Intelligent computer vision
-                for discovering and identifying
-                the world around you.
-
-                Powered by Snow AI.
-
+            <p class="hero-description">
+                Force X is an experimental computer-vision
+                platform powered by Snow AI. Capture an image
+                and send it to the Snow AI detection system for
+                analysis.
             </p>
 
             <button
-                class="primary-btn"
-                onclick="showPage('detection')">
+                class="primary"
+                onclick="openDetection()">
 
-                START DETECTION
+                📷 START SCAN
 
             </button>
 
@@ -952,173 +538,66 @@ body {
 </section>
 
 
-<!-- =======================================================
-     DETECTION
-======================================================= -->
+<!-- DETECTION -->
 
-<section
-    id="detection"
-    class="page">
+<section id="detection" class="page">
 
     <div class="container">
 
-        <div class="section-header">
+        <h2>📷 Snow AI Detection</h2>
 
-            <h2>
-                Snow AI Scanner
-            </h2>
+        <p class="section-description">
+            Start a five-second scan. Your camera image will
+            be captured and sent to the Force X Snow AI backend.
+        </p>
 
-            <p>
-                Point your camera at an object
-                or animal and let Snow AI analyze it.
-            </p>
+        <div class="card scan-area">
 
-        </div>
+            <button
+                id="startButton"
+                class="primary"
+                onclick="startScan()">
 
+                📷 START SCAN
 
-        <div class="scanner">
+            </button>
 
+            <button
+                id="stopButton"
+                class="secondary"
+                onclick="stopScan()"
+                disabled>
 
-            <!-- CAMERA -->
+                ⛔ STOP
 
-            <div class="camera-panel">
+            </button>
 
-                <div class="camera-container">
+            <video
+                id="camera"
+                autoplay
+                playsinline>
+            </video>
 
-                    <div
-                        id="cameraPlaceholder"
-                        class="camera-placeholder">
+            <canvas id="canvas"></canvas>
 
-                        <div class="camera-icon">
-                            ◉
-                        </div>
+            <img
+                id="preview"
+                alt="Captured scan">
 
-                        <p>
-                            Camera ready
-                        </p>
-
-                    </div>
-
-                    <video
-                        id="camera"
-                        autoplay
-                        playsinline>
-                    </video>
-
-                    <div
-                        id="scanCorners"
-                        class="scan-corners">
-                    </div>
-
-                    <div
-                        id="scanningLine"
-                        class="scanning-line">
-                    </div>
-
-                </div>
-
-
-                <canvas
-                    id="canvas"
-                    style="display:none;">
-                </canvas>
-
-
-                <img
-                    id="preview"
-                    alt="Captured image">
-
-            </div>
-
-
-            <!-- CONTROLS -->
-
-            <div class="control-panel">
-
-                <h3>
-                    Detection Control
-                </h3>
-
-                <p>
-
-                    Snow AI will activate your
-                    camera, capture a frame and
-                    send it to the Force X
-                    detection system.
-
-                </p>
-
-
-                <div class="control-buttons">
-
-                    <button
-                        id="startButton"
-                        class="primary-btn"
-                        onclick="startScan()">
-
-                        START SCAN
-
-                    </button>
-
-
-                    <button
-                        id="stopButton"
-                        class="secondary-btn"
-                        onclick="stopScan()"
-                        disabled>
-
-                        STOP SCAN
-
-                    </button>
-
-                </div>
-
+            <div class="progress" id="progress">
 
                 <div
-                    id="scanStatus"
-                    class="scan-status">
-
-                    ● Ready for detection
-
+                    class="progress-bar"
+                    id="progressBar">
                 </div>
 
             </div>
 
-        </div>
+            <div
+                id="scanStatus"
+                class="status">
 
-    </div>
-
-</section>
-
-
-<!-- =======================================================
-     REPORTS
-======================================================= -->
-
-<section
-    id="reports"
-    class="page">
-
-    <div class="container">
-
-        <div class="section-header">
-
-            <h2>
-                Detection Reports
-            </h2>
-
-            <p>
-                Results generated by Snow AI.
-            </p>
-
-        </div>
-
-
-        <div id="reportText">
-
-            <div class="report-empty">
-
-                No detection has been performed yet.
+                🟢 Ready to scan
 
             </div>
 
@@ -1129,58 +608,75 @@ body {
 </section>
 
 
-<!-- =======================================================
-     ABOUT
-======================================================= -->
+<!-- REPORTS -->
 
-<section
-    id="about"
-    class="page">
+<section id="reports" class="page">
 
     <div class="container">
 
-        <div class="section-header">
+        <h2>📊 Snow AI Reports</h2>
 
-            <h2>
-                About Force X
-            </h2>
+        <p class="section-description">
+            Results returned by the Snow AI detection system.
+        </p>
 
-            <p>
-                Built to explore and protect
-                the world's wildlife.
+        <div class="card">
+
+            <div id="reportText">
+
+                <p class="section-description">
+                    No detection reports yet.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section id="about" class="page">
+
+    <div class="container">
+
+        <h2>ℹ️ About Force X</h2>
+
+        <div class="card">
+
+            <p class="section-description">
+
+                Force X is a computer-vision project designed
+                around Snow AI. The goal is to develop a system
+                capable of recognising animals and other objects
+                from images.
+
+                <br><br>
+
+                The project also focuses on species discovery,
+                conservation and the possibility of identifying
+                animals that may be difficult to distinguish
+                using ordinary object-detection systems.
+
             </p>
 
         </div>
 
 
-        <div class="about-grid">
-
+        <div class="species-grid">
 
             <div class="species-card">
 
-                <div class="species-icon">
-                    🦍
-                </div>
+                <div class="species-icon">🦍</div>
 
-                <h3>
-                    Bonobo
-                </h3>
+                <h3>Bonobo</h3>
 
                 <p>
-
-                    <strong>
-                        Pan paniscus
-                    </strong>
-
-                    <br><br>
-
-                    A great ape native to the
+                    Pan paniscus — a great ape native to the
                     Democratic Republic of the Congo.
-
-                    Snow AI can eventually be
-                    trained to distinguish bonobos
-                    from other primates.
-
                 </p>
 
             </div>
@@ -1188,29 +684,13 @@ body {
 
             <div class="species-card">
 
-                <div class="species-icon">
-                    🦒
-                </div>
+                <div class="species-icon">🦒</div>
 
-                <h3>
-                    Okapi
-                </h3>
+                <h3>Okapi</h3>
 
                 <p>
-
-                    <strong>
-                        Okapia johnstoni
-                    </strong>
-
-                    <br><br>
-
-                    A unique giraffid from the
-                    forests of the Democratic
-                    Republic of the Congo.
-
-                    Its striped legs make it a
-                    distinctive computer-vision target.
-
+                    Okapia johnstoni — a forest-dwelling giraffid
+                    native to the Democratic Republic of the Congo.
                 </p>
 
             </div>
@@ -1218,44 +698,528 @@ body {
 
             <div class="species-card">
 
-                <div class="species-icon">
-                    🐒
-                </div>
+                <div class="species-icon">🐒</div>
 
-                <h3>
-                    Likweli
-                </h3>
+                <h3>Likweli</h3>
 
                 <p>
-
-                    <strong>
-                        Colobus congoensis
-                    </strong>
-
-                    <br><br>
-
-                    A recently described African
-                    colobus monkey associated with
-                    forests of the Democratic
-                    Republic of the Congo.
-
+                    Colobus congoensis — a colobus monkey associated
+                    with forests of the Democratic Republic of the Congo.
                 </p>
 
             </div>
 
         </div>
 
+    </div>
 
-        <div class="about-description">
+</section>
 
-            <strong
-                style="color:var(--green);">
 
-                THE FORCE X MISSION
+<footer>
 
-            </strong>
+    FORCE X • SNOW AI
+
+</footer>
+
+
+<script>
+
+/*
+==================================================
+FORCE X FRONTEND
+SNOW AI BACKEND CONNECTION
+==================================================
+*/
+
+const SNOW_AI_API =
+    "https://force-x-backend.onrender.com/detect";
+
+
+let stream = null;
+let timer = null;
+let scanning = false;
+let startTime = 0;
+
+
+/* PAGE NAVIGATION */
+
+function showPage(pageId, clickedButton = null) {
+
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+
+            page.classList.remove("active");
+
+        });
+
+
+    const page =
+        document.getElementById(pageId);
+
+    if (page) {
+        page.classList.add("active");
+    }
+
+
+    document
+        .querySelectorAll(".nav-links button")
+        .forEach(button => {
+
+            button.classList.remove("active");
+
+        });
+
+
+    if (clickedButton) {
+        clickedButton.classList.add("active");
+    }
+
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+}
+
+
+function openDetection() {
+
+    const scanButton =
+        document.querySelector(
+            ".nav-links button:nth-child(2)"
+        );
+
+    showPage(
+        "detection",
+        scanButton
+    );
+
+}
+
+
+/* START SCAN */
+
+async function startScan() {
+
+    if (scanning) {
+        return;
+    }
+
+
+    const camera =
+        document.getElementById("camera");
+
+    const status =
+        document.getElementById("scanStatus");
+
+    const startButton =
+        document.getElementById("startButton");
+
+    const stopButton =
+        document.getElementById("stopButton");
+
+    const progress =
+        document.getElementById("progress");
+
+    const progressBar =
+        document.getElementById("progressBar");
+
+
+    startButton.disabled = true;
+    stopButton.disabled = false;
+
+
+    status.innerText =
+        "📷 Starting camera...";
+
+
+    try {
+
+        stream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video: {
+                    facingMode: {
+                        ideal: "environment"
+                    },
+
+                    width: {
+                        ideal: 1280
+                    },
+
+                    height: {
+                        ideal: 720
+                    }
+                },
+
+                audio: false
+
+            });
+
+
+        camera.srcObject = stream;
+
+        camera.style.display = "block";
+
+        scanning = true;
+
+        startTime = Date.now();
+
+
+        progress.style.display = "block";
+
+        progressBar.style.width = "0%";
+
+
+        let seconds = 5;
+
+
+        status.innerText =
+            "🟢 Scanning... 5 seconds";
+
+
+        timer =
+            setInterval(() => {
+
+                seconds--;
+
+                const percent =
+                    ((5 - seconds) / 5) * 100;
+
+                progressBar.style.width =
+                    percent + "%";
+
+
+                if (seconds > 0) {
+
+                    status.innerText =
+                        "🧠 Snow AI scanning... "
+                        + seconds
+                        + " seconds";
+
+                }
+
+
+                if (seconds === 0) {
+
+                    clearInterval(timer);
+
+                    timer = null;
+
+                    captureImage();
+
+                }
+
+            }, 1000);
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        status.innerText =
+            "❌ Camera permission was denied or the camera is unavailable.";
+
+        resetButtons();
+
+    }
+
+}
+
+
+/* CAPTURE IMAGE */
+
+function captureImage() {
+
+    const camera =
+        document.getElementById("camera");
+
+    const canvas =
+        document.getElementById("canvas");
+
+    const preview =
+        document.getElementById("preview");
+
+    const status =
+        document.getElementById("scanStatus");
+
+
+    if (!camera.videoWidth) {
+
+        status.innerText =
+            "❌ Camera image unavailable.";
+
+        stopCamera();
+
+        resetButtons();
+
+        return;
+
+    }
+
+
+    canvas.width =
+        camera.videoWidth;
+
+    canvas.height =
+        camera.videoHeight;
+
+
+    const context =
+        canvas.getContext("2d");
+
+
+    context.drawImage(
+        camera,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    const imageData =
+        canvas.toDataURL(
+            "image/jpeg",
+            0.9
+        );
+
+
+    preview.src =
+        imageData;
+
+    preview.style.display =
+        "block";
+
+
+    stopCamera();
+
+
+    const duration =
+        (
+            (Date.now() - startTime)
+            / 1000
+        ).toFixed(1);
+
+
+    const timestamp =
+        new Date().toLocaleString();
+
+
+    status.innerText =
+        "🔗 Connecting to Snow AI...";
+
+
+    /*
+    ==========================================
+    THIS IS THE IMPORTANT CONNECTION
+    ==========================================
+    */
+
+    fetch(
+        SNOW_AI_API,
+        {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+
+            body: JSON.stringify({
+
+                image: imageData,
+
+                timestamp: timestamp,
+
+                duration: duration
+
+            })
+
+        }
+    )
+
+    .then(response => {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Backend returned HTTP "
+                + response.status
+            );
+
+        }
+
+        return response.json();
+
+    })
+
+    .then(data => {
+
+        console.log(
+            "Snow AI response:",
+            data
+        );
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.error ||
+                "Snow AI returned an error."
+            );
+
+        }
+
+
+        displayResults(data);
+
+        resetButtons();
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "Snow AI error:",
+            error
+        );
+
+
+        status.innerText =
+            "❌ Snow AI could not analyze the image.";
+
+        resetButtons();
+
+    });
+
+}
+
+
+/* DISPLAY RESULTS */
+
+function displayResults(data) {
+
+    const status =
+        document.getElementById(
+            "scanStatus"
+        );
+
+    const reportText =
+        document.getElementById(
+            "reportText"
+        );
+
+
+    let html = `
+
+        <div class="report">
+
+            <div class="report-header">
+                ❄️ SNOW AI REPORT
+            </div>
+
+            <br>
+
+            🕒 <strong>Timestamp</strong><br>
+            ${escapeHTML(data.timestamp || "Unknown")}
 
             <br><br>
 
-            Force X combines computer vision
-  
+            ⏱️ <strong>Scan duration</strong><br>
+            ${escapeHTML(data.duration || "Unknown")}
+            seconds
+
+    `;
+
+
+    if (
+        !data.objects ||
+        data.objects.length === 0
+    ) {
+
+        html += `
+
+            <div class="detection">
+
+                🔍 <strong>No objects detected.</strong>
+
+                <br><br>
+
+                Snow AI did not find a recognised
+                object in this scan.
+
+            </div>
+
+        `;
+
+    } else {
+
+        html += `
+
+            <br><br>
+
+            🔍 <strong>
+            Objects detected:
+            </strong>
+
+        `;
+
+
+        data.objects.forEach(object => {
+
+            const name =
+                object.name ||
+                "Unknown object";
+
+
+            const confidence =
+                object.confidence ||
+                "Unknown";
+
+
+            const description =
+                object.description ||
+                "No description available.";
+
+
+            const googleURL =
+                object.google_url ||
+                (
+                    "https://www.google.com/search?q="
+                    +
+                    encodeURIComponent(name)
+                );
+
+
+            html += `
+
+                <div class="detection">
+
+                    <div class="detection-name">
+                        🔹 ${escapeHTML(name)}
+                    </div>
+
+                    <br>
+
+                    🎯 Confidence:
+
+                    <span class="confidence">
+                        ${escapeHTML(confidence)}
+                    </span>
+
+                    <br><br>
+
+                    📚
+                    ${escapeHTML(description)}
+
+                    <br>
+
+                    <a
+                        class="search-link"
+                        href="${escapeAttribute(googleURL)}"
+                        target="_blank"
+                        rel="noopener noreferrer">
