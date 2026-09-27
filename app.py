@@ -339,6 +339,31 @@ h2 {
     box-shadow: 0 0 10px #35ff83;
 }
 
+.species {
+    margin-top: 25px;
+    padding: 22px;
+    border-radius: 20px;
+    background: rgba(0,0,0,0.20);
+    border: 1px solid rgba(53,255,131,0.14);
+}
+
+.species-title {
+    color: #35ff83;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.species-label {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.divider {
+    margin: 30px 0;
+    border: 0;
+    border-top: 1px solid rgba(53,255,131,0.15);
+}
+
 @media (max-width: 650px) {
 
     nav {
@@ -547,7 +572,7 @@ No detection reports yet.
 
 <strong>Force X</strong> is a
 computer-vision platform powered
-by Snow AI.
+by <strong>Snow AI</strong>.
 
 The system captures an image,
 sends it to Snow AI for analysis,
@@ -556,35 +581,314 @@ detection report.
 
 <br><br>
 
-The project focuses on
-identifying animals and objects
-while supporting future
-conservation and species
+The project focuses on identifying
+animals and objects while supporting
+future conservation and species
 recognition research.
 
 <br><br>
 
-<strong>Current target species:</strong>
+<strong>🌍 Featured Species</strong>
 
 <br><br>
 
-🦍 <strong>Bonobo — Pan paniscus</strong>
-
-<br><br>
-
-🦒 <strong>Okapi — Okapia johnstoni</strong>
-
-<br><br>
-
-🐒 <strong>Likweli — Colobus congoensis</strong>
-
-<br><br>
-
-Snow AI can be expanded with
-additional training data as the
-Force X project develops.
+Force X currently focuses on three
+interesting African species that are
+important targets for future Snow AI
+training and recognition.
 
 </p>
+
+<div class="species">
+
+<div class="species-title">
+🦍 Bonobo — Pan paniscus
+</div>
+
+<br>
+
+<strong class="species-label">
+Classification:
+</strong>
+Great ape, family Hominidae.
+
+<br><br>
+
+<strong class="species-label">
+Range:
+</strong>
+Democratic Republic of the Congo (DRC).
+
+<br><br>
+
+<strong class="species-label">
+Habitat:
+</strong>
+Tropical forests, including primary
+and secondary forest.
+
+<br><br>
+
+<strong class="species-label">
+Scientific recognition:
+</strong>
+Bonobos were formally recognised
+as a separate species in 1929.
+Before this, specimens were sometimes
+mistaken for unusually small
+chimpanzees.
+
+<br><br>
+
+<strong class="species-label">
+Conservation status:
+</strong>
+Endangered.
+
+<br><br>
+
+<strong class="species-label">
+Main threats:
+</strong>
+Hunting, habitat loss and human
+encroachment.
+
+<br><br>
+
+<strong class="species-label">
+Why Force X is interested:
+</strong>
+Bonobos have distinctive physical
+and behavioural characteristics.
+Future versions of Snow AI could
+learn to distinguish bonobos from
+other primates instead of simply
+identifying them as "monkeys."
+
+</div>
+
+<div class="species">
+
+<div class="species-title">
+🦒 Okapi — Okapia johnstoni
+</div>
+
+<br>
+
+<strong class="species-label">
+Classification:
+</strong>
+Giraffid — family Giraffidae.
+
+<br><br>
+
+<strong class="species-label">
+Closest living relative:
+</strong>
+Giraffe.
+
+<br><br>
+
+<strong class="species-label">
+Range:
+</strong>
+Democratic Republic of the Congo.
+
+<br><br>
+
+<strong class="species-label">
+Habitat:
+</strong>
+Dense tropical rainforest.
+
+<br><br>
+
+<strong class="species-label">
+Scientific recognition:
+</strong>
+The okapi was scientifically
+recognised in the early 1900s.
+Specimens obtained in 1901 helped
+scientists establish it as a
+previously undescribed giraffid.
+
+<br><br>
+
+<strong class="species-label">
+Conservation status:
+</strong>
+Endangered.
+
+<br><br>
+
+<strong class="species-label">
+Main threats:
+</strong>
+Hunting, habitat destruction and
+human disturbance.
+
+<br><br>
+
+<strong class="species-label">
+Interesting fact:
+</strong>
+Although its body can look similar
+to a forest antelope and its legs
+have zebra-like stripes, the okapi
+is actually the closest living
+relative of the giraffe.
+
+<br><br>
+
+<strong class="species-label">
+Why Force X is interested:
+</strong>
+The okapi has several distinctive
+visual characteristics, including
+its body shape, dark coat, striped
+legs and giraffid head and neck.
+These features could help Snow AI
+learn to recognise the species.
+
+</div>
+
+<div class="species">
+
+<div class="species-title">
+🐒 Likweli — Colobus congoensis
+</div>
+
+<br>
+
+<strong class="species-label">
+Common name:
+</strong>
+Likweli.
+
+<br><br>
+
+<strong class="species-label">
+Scientific name:
+</strong>
+Colobus congoensis.
+
+<br><br>
+
+<strong class="species-label">
+Range:
+</strong>
+Lomami National Park and surrounding
+forest areas in the Democratic
+Republic of the Congo.
+
+<br><br>
+
+<strong class="species-label">
+Habitat:
+</strong>
+High, closed forest canopy,
+particularly terra-firme forest.
+
+<br><br>
+
+<strong class="species-label">
+Scientific recognition:
+</strong>
+Researchers first photographed an
+unfamiliar monkey in 2008.
+Additional observations and
+photographs were collected over
+the following years.
+
+<br><br>
+
+<strong class="species-label">
+Formal description:
+</strong>
+The species was formally described
+in a scientific publication in 2026.
+
+<br><br>
+
+<strong class="species-label">
+Appearance:
+</strong>
+The animal is predominantly black,
+with distinctive orange-cream
+colouration around the mouth and
+nose and a white area beneath
+the tail.
+
+<br><br>
+
+<strong class="species-label">
+Conservation:
+</strong>
+Researchers have recommended an
+initial Endangered classification
+because of its limited known range,
+population concerns, hunting pressure
+and habitat conversion.
+
+<br><br>
+
+<strong class="species-label">
+Why Force X is interested:
+</strong>
+Likweli is especially interesting
+for Snow AI because it demonstrates
+the challenge of recognising species
+that may be unfamiliar to a general
+object-detection model.
+
+<br><br>
+
+Instead of incorrectly identifying
+an unfamiliar animal as another
+species, a future version of Snow AI
+could recognise uncertainty and
+respond with:
+
+<br><br>
+
+<strong>
+"Possible unidentified or
+insufficiently trained species.
+Further analysis required."
+</strong>
+
+</div>
+
+<div class="species">
+
+<div class="species-title">
+❄️ The Future of Snow AI
+</div>
+
+<br>
+
+As Snow AI receives more specialised
+training data, the system can be
+expanded to recognise specific
+species rather than relying only on
+broad categories.
+
+<br><br>
+
+Future versions of Force X could
+include additional African species,
+conservation information,
+geographical data and GPS-based
+observations.
+
+<br><br>
+
+The long-term goal of Force X is to
+combine artificial intelligence,
+species recognition and conservation
+technology into one platform.
+
+</div>
 
 </div>
 
@@ -892,270 +1196,4 @@ function displayResults(data) {
                 name +
                 "</strong><br>" +
 
-                "🎯 Confidence: " +
-
-                "<span class='confidence'>" +
-                confidence +
-                "</span><br>" +
-
-                "📚 " +
-                description +
-
-                "<br>" +
-
-                "<a class='search' " +
-                "href='" +
-                googleUrl +
-                "' " +
-                "target='_blank'>" +
-
-                "🔎 Search Google" +
-
-                "</a>" +
-
-                "</div>";
-
-        });
-
-    }
-
-    html += "</div>";
-
-    document
-        .getElementById("reportText")
-        .innerHTML = html;
-
-    status.innerText =
-        "🟢 Snow AI scan complete";
-
-    showPage("reports");
-}
-
-function stopScan() {
-
-    if (timer) {
-
-        clearInterval(timer);
-        timer = null;
-
-    }
-
-    stopCamera();
-
-    scanning = false;
-
-    resetButtons();
-
-    document
-        .getElementById("scanStatus")
-        .innerText =
-        "🟡 Scan stopped";
-}
-
-function stopCamera() {
-
-    if (stream) {
-
-        stream
-            .getTracks()
-            .forEach(function(track) {
-
-                track.stop();
-
-            });
-
-        stream = null;
-    }
-
-    const camera =
-        document.getElementById("camera");
-
-    camera.srcObject = null;
-    camera.style.display = "none";
-}
-
-function resetButtons() {
-
-    scanning = false;
-
-    const startButton =
-        document.getElementById("startButton");
-
-    const stopButton =
-        document.getElementById("stopButton");
-
-    startButton.disabled = false;
-    stopButton.disabled = true;
-}
-
-window.addEventListener(
-    "beforeunload",
-    function() {
-
-        if (timer) {
-
-            clearInterval(timer);
-
-        }
-
-        stopCamera();
-
-    }
-);
-
-</script>
-
-</body>
-
-</html>
-"""
-
-@app.route("/")
-def home():
-    return Response(HTML, mimetype="text/html")
-
-
-@app.route("/health")
-def health():
-    return jsonify({
-        "status": "online",
-        "service": "Force X",
-        "snow_ai": "connected"
-    })
-
-
-@app.route("/detect", methods=["POST"])
-def detect():
-
-    try:
-
-        data = request.get_json()
-
-        if not data or "image" not in data:
-
-            return jsonify({
-                "success": False,
-                "error": "No image received."
-            }), 400
-
-        image_data = data["image"]
-
-        if "," in image_data:
-
-            image_data = image_data.split(",", 1)[1]
-
-        image_bytes = b64decode(image_data)
-
-        array = np.frombuffer(
-            image_bytes,
-            dtype=np.uint8
-        )
-
-        image = cv2.imdecode(
-            array,
-            cv2.IMREAD_COLOR
-        )
-
-        if image is None:
-
-            return jsonify({
-                "success": False,
-                "error": "Invalid image."
-            }), 400
-
-        results = model(image)
-
-        objects = []
-
-        for result in results:
-
-            for box in result.boxes:
-
-                confidence = float(
-                    box.conf[0]
-                )
-
-                class_id = int(
-                    box.cls[0]
-                )
-
-                name = model.names[class_id]
-
-                description = object_info.get(
-                    name,
-                    "Snow AI detected this object."
-                )
-
-                google_url = (
-                    "https://www.google.com/search?q="
-                    + urllib.parse.quote(name)
-                )
-
-                objects.append({
-
-                    "name": name,
-
-                    "confidence":
-                        f"{confidence * 100:.1f}%",
-
-                    "description":
-                        description,
-
-                    "google_url":
-                        google_url
-                })
-
-        timestamp = data.get(
-            "timestamp",
-            datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-        )
-
-        duration = data.get(
-            "duration",
-            "Unknown"
-        )
-
-        return jsonify({
-
-            "success": True,
-
-            "timestamp":
-                timestamp,
-
-            "duration":
-                duration,
-
-            "objects":
-                objects
-
-        })
-
-    except Exception as error:
-
-        print("Detection error:", error)
-
-        return jsonify({
-
-            "success": False,
-
-            "error":
-                "Snow AI could not process the image."
-
-        }), 500
-
-
-if __name__ == "__main__":
-
-    port = int(
-        os.environ.get(
-            "PORT",
-            10000
-        )
-    )
-
-    app.run(
-        host="0.0.0.0",
-        port=port
-)
+                "🎯 Confidence: "
