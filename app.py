@@ -1132,7 +1132,7 @@ function captureImage() {
                 timestamp: timestamp,
 
                 duration: duration,
-                latitude:
+                 latitude:
                     gpsLocation
                         ? gpsLocation.latitude
                         : null,
@@ -1335,6 +1335,12 @@ function displayResults(data) {
 
     }
 
+    html +=
+        "<br>" +
+        "<button onclick='saveReportToStorage()'>" +
+        "🗂️ Save to Storage" +
+        "</button>";
+
     html += "</div>";
 
     document
@@ -1345,6 +1351,116 @@ function displayResults(data) {
         "🟢 Snow AI scan complete";
 
     showScanCompleteNotification();
+}
+
+function saveReportToStorage() {
+
+    const preview =
+        document.getElementById("preview");
+
+    const reportText =
+        document.getElementById("reportText");
+
+    if (!preview.src) {
+
+        alert(
+            "No scan image is available to save."
+        );
+
+        return;
+    }
+
+    const savedReport = {
+
+        id: Date.now(),
+
+        image: preview.src,
+
+        report:
+            reportText.innerHTML,
+
+        savedAt:
+            new Date().toLocaleString()
+
+    };
+
+    const request =
+        indexedDB.open(
+            "ForceXStorage",
+            1
+        );
+
+    request.onupgradeneeded =
+        function(event) {
+
+            const db =
+                event.target.result;
+
+            if (
+                !db.objectStoreNames.contains(
+                    "reports"
+                )
+            ) {
+
+                db.createObjectStore(
+                    "reports",
+                    {
+                        keyPath: "id"
+                    }
+                );
+
+            }
+
+        };
+
+    request.onsuccess =
+        function(event) {
+
+            const db =
+                event.target.result;
+
+            const transaction =
+                db.transaction(
+                    ["reports"],
+                    "readwrite"
+                );
+
+            const store =
+                transaction.objectStore(
+                    "reports"
+                );
+
+            store.put(savedReport);
+
+            transaction.oncomplete =
+                function() {
+
+                    alert(
+                        "🗂️ Scan saved to Force X Storage."
+                    );
+
+                };
+
+            transaction.onerror =
+                function() {
+
+                    alert(
+                        "❌ Could not save the scan."
+                    );
+
+                };
+
+        };
+
+    request.onerror =
+        function() {
+
+            alert(
+                "❌ Storage could not be opened."
+            );
+
+        };
+
 }
 
 function showScanCompleteNotification() {
@@ -1592,6 +1708,6 @@ if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
         port=port
-)
+    
 
            
