@@ -86,19 +86,12 @@ nav {
     width: 100%;
     min-height: 78px;
     padding: 10px 22px;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     background: rgba(3,8,5,0.96);
-
-    border-bottom:
-        1px solid rgba(48,255,125,0.25);
-
-    box-shadow:
-        0 4px 25px rgba(0,0,0,0.35);
-
+    border-bottom: 1px solid rgba(48,255,125,0.25);
+    box-shadow: 0 4px 25px rgba(0,0,0,0.35);
     position: sticky;
     top: 0;
     z-index: 10;
@@ -113,27 +106,15 @@ nav {
 .logo-mark {
     width: 52px;
     height: 52px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     border-radius: 15px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #35ff83,
-            #0b5d31
-        );
-
+    background: linear-gradient(135deg, #35ff83, #0b5d31);
     color: #041008;
-
     font-size: 25px;
     font-weight: 900;
-
-    box-shadow:
-        0 0 20px rgba(53,255,131,0.25);
+    box-shadow: 0 0 20px rgba(53,255,131,0.25);
 }
 
 .logo-name {
@@ -197,39 +178,23 @@ h1 {
 
 .card {
     background: rgba(10,30,19,0.78);
-
-    border:
-        1px solid rgba(53,255,131,0.20);
-
+    border: 1px solid rgba(53,255,131,0.20);
     border-radius: 24px;
-
     padding: 25px;
-
     margin-top: 25px;
-
-    box-shadow:
-        0 10px 35px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 35px rgba(0,0,0,0.25);
 }
 
 button {
     border: 1px solid rgba(53,255,131,0.35);
-
     border-radius: 15px;
-
     padding: 16px 25px;
-
     font-size: 17px;
-
     font-weight: bold;
-
     cursor: pointer;
-
     background: #35ff83;
-
     color: #041008;
-
     margin: 5px;
-
     transition: 0.2s;
 }
 
@@ -349,6 +314,70 @@ h2 {
     font-size: 14px;
 }
 
+.scan-notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    width: min(92%, 420px);
+    background: rgba(3,12,7,0.98);
+    border: 1px solid rgba(53,255,131,0.35);
+    border-radius: 20px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 9999;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+    cursor: pointer;
+    opacity: 0;
+    transition: 0.35s ease;
+}
+
+.scan-notification.show {
+    transform: translate(-50%, 0);
+    opacity: 1;
+}
+
+.notification-logo {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #35ff83, #0b5d31);
+    color: #041008;
+    font-size: 20px;
+    font-weight: 900;
+    box-shadow: 0 0 20px rgba(53,255,131,0.25);
+}
+
+.notification-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.notification-title {
+    color: #35ff83;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.notification-message {
+    color: #a8d9b8;
+    font-size: 13px;
+}
+
+.notification-close {
+    margin-left: auto;
+    color: #82ad91;
+    font-size: 20px;
+    padding: 5px;
+}
+
 @media (max-width: 650px) {
 
     nav {
@@ -388,6 +417,33 @@ h2 {
 </head>
 
 <body>
+
+<div
+    id="scanNotification"
+    class="scan-notification"
+    onclick="openScanResults()">
+
+    <div class="notification-logo">
+        FX
+    </div>
+
+    <div class="notification-text">
+
+        <div class="notification-title">
+            Snow AI is done scanning
+        </div>
+
+        <div class="notification-message">
+            Tap to view results
+        </div>
+
+    </div>
+
+    <div class="notification-close">
+        ×
+    </div>
+
+</div>
 
 <nav>
 
@@ -1076,7 +1132,6 @@ function captureImage() {
                 timestamp: timestamp,
 
                 duration: duration,
-
                 latitude:
                     gpsLocation
                         ? gpsLocation.latitude
@@ -1288,6 +1343,24 @@ function displayResults(data) {
 
     status.innerText =
         "🟢 Snow AI scan complete";
+
+    showScanCompleteNotification();
+}
+
+function showScanCompleteNotification() {
+
+    const notification =
+        document.getElementById("scanNotification");
+
+    notification.classList.add("show");
+}
+
+function openScanResults() {
+
+    const notification =
+        document.getElementById("scanNotification");
+
+    notification.classList.remove("show");
 
     showPage("reports");
 }
@@ -1520,3 +1593,5 @@ if __name__ == "__main__":
         host="0.0.0.0",
         port=port
 )
+
+           
