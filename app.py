@@ -570,9 +570,118 @@ recognition research.
 
 🦍 <strong>Bonobo — Pan paniscus</strong>
 
+br><br>
+
+<strong>Classification:</strong>
+Great ape, family Hominidae.
+
+<br>
+
+<strong>Range:</strong>
+Democratic Republic of the Congo (DRC).
+
+<br>
+
+<strong>Habitat:</strong>
+Tropical forests, including primary
+and secondary forest.
+
+<br>
+
+<strong>Scientific recognition:</strong>
+Bonobos were formally recognised as
+a separate species in 1929. Before
+this, specimens were sometimes
+mistaken for unusually small
+chimpanzees.
+
+<br>
+
+<strong>Conservation status:</strong>
+Endangered.
+
+<br>
+
+<strong>Main threats:</strong>
+Hunting, habitat loss and human
+encroachment.
+
+<br><br>
+
+<strong>Why Force X is interested:</strong>
+
+Bonobos are closely related to
+chimpanzees and have distinctive
+physical and behavioural
+characteristics. Snow AI could
+eventually learn to distinguish
+bonobos from other primates instead
+of simply identifying them as
+"monkeys."
+
 <br><br>
 
 🦒 <strong>Okapi — Okapia johnstoni</strong>
+
+<br><br>
+
+<strong>Classification:</strong>
+Giraffid — family Giraffidae.
+
+<br>
+
+<strong>Closest living relative:</strong>
+Giraffe.
+
+<br>
+
+<strong>Range:</strong>
+Democratic Republic of the Congo.
+
+<br>
+
+<strong>Habitat:</strong>
+Dense tropical rainforest.
+
+<br>
+
+<strong>Scientific recognition:</strong>
+The okapi was scientifically
+recognised in the early 1900s.
+Specimens obtained in 1901 helped
+scientists establish it as a
+previously undescribed giraffid.
+
+<br>
+
+<strong>Conservation status:</strong>
+Endangered.
+
+<br>
+
+<strong>Main threats:</strong>
+Hunting, habitat destruction and
+human disturbance.
+
+<br>
+
+<strong>Interesting fact:</strong>
+Although its body can look similar
+to a forest antelope and its legs
+have zebra-like stripes, the okapi
+is actually the closest living
+relative of the giraffe.
+
+<br><br>
+
+<strong>Why Force X is interested:</strong>
+
+The okapi has several distinctive
+visual characteristics, including
+its body shape, dark coat, striped
+legs and giraffid head and neck.
+These features could help Snow AI
+learn to recognise the species.
 
 <br><br>
 
@@ -580,9 +689,81 @@ recognition research.
 
 <br><br>
 
+<strong>Common name:</strong>
+Likweli.
+
+<br>
+
+<strong>Scientific name:</strong>
+Colobus congoensis.
+
+<br>
+
+<strong>Range:</strong>
+Lomami National Park and surrounding
+forest areas in the Democratic
+Republic of the Congo.
+
+<br>
+
+<strong>Habitat:</strong>
+High, closed forest canopy,
+particularly terra-firme forest.
+
+<br>
+
+<strong>Scientific recognition:</strong>
+Researchers first photographed an
+unfamiliar monkey in 2008.
+Additional observations and
+photographs were collected over the
+following years.
+
+<br>
+
+<strong>Formal description:</strong>
+The species was formally described
+in a scientific publication in 2026.
+
+<br>
+
+<strong>Appearance:</strong>
+The animal is predominantly black,
+with distinctive orange-cream
+colouration around the mouth and
+nose and a white area beneath the
+tail.
+
+<br>
+
+<strong>Conservation:</strong>
+Researchers have recommended an
+initial Endangered classification
+because of its limited known range,
+population concerns, hunting pressure
+and habitat conversion.
+
+<br>
+
+<strong>Why Force X is interested:</strong>
+
+Likweli is especially interesting
+for Snow AI because it demonstrates
+the challenge of recognising species
+that may be unfamiliar to a general
+object-detection model.
+
+Instead of incorrectly identifying
+an unfamiliar animal as another
+species, a future version of Snow AI
+could recognise uncertainty and
+respond with something such as:
+
+<br><br>
+
 Snow AI can be expanded with
 additional training data as the
-Force X project develops.
+Force Multiplier project develops.
 
 </p>
 
