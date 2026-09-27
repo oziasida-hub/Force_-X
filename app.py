@@ -339,6 +339,33 @@ h2 {
     box-shadow: 0 0 10px #35ff83;
 }
 
+/* GPS ADDITION */
+
+.gps-card {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 18px;
+    background: rgba(0,0,0,0.35);
+    border: 1px solid rgba(53,255,131,0.18);
+}
+
+.gps-status {
+    margin-top: 15px;
+    color: #a8d9b8;
+    line-height: 1.6;
+}
+
+.gps-coordinates {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: rgba(53,255,131,0.06);
+    color: #35ff83;
+    font-family: monospace;
+    display: none;
+    white-space: pre-line;
+}
+
 @media (max-width: 650px) {
 
     nav {
@@ -500,6 +527,30 @@ id="scanStatus"
 class="status">
 🟢 Ready to scan
 </p>
+
+<!-- GPS ADDITION -->
+
+<div class="gps-card">
+
+<strong>📍 GPS LOCATION</strong>
+
+<p
+id="gpsStatus"
+class="gps-status">
+Location not captured yet.
+</p>
+
+<button
+onclick="getGPSLocation()">
+📍 GET LOCATION
+</button>
+
+<div
+id="gpsCoordinates"
+class="gps-coordinates">
+</div>
+
+</div>
 
 </div>
 
@@ -780,6 +831,104 @@ let timer = null;
 let scanning = false;
 let startTime = 0;
 
+/* GPS ADDITION */
+
+let gpsLocation = {
+    latitude: null,
+    longitude: null,
+    accuracy: null
+};
+
+function getGPSLocation() {
+
+    const status =
+        document.getElementById("gpsStatus");
+
+    const coordinates =
+        document.getElementById("gpsCoordinates");
+
+    if (!navigator.geolocation) {
+
+        status.innerText =
+            "❌ GPS is not supported by this browser.";
+
+        return;
+    }
+
+    status.innerText =
+        "📍 Getting GPS location...";
+
+    navigator.geolocation.getCurrentPosition(
+
+        function(position) {
+
+            gpsLocation.latitude =
+                position.coords.latitude;
+
+            gpsLocation.longitude =
+                position.coords.longitude;
+
+            gpsLocation.accuracy =
+                position.coords.accuracy;
+
+            status.innerText =
+                "🟢 GPS location captured.";
+
+            coordinates.style.display =
+                "block";
+
+            coordinates.innerText =
+                "Latitude: " +
+                gpsLocation.latitude.toFixed(6) +
+                "\n" +
+                "Longitude: " +
+                gpsLocation.longitude.toFixed(6) +
+                "\n" +
+                "Accuracy: approximately " +
+                Math.round(
+                    gpsLocation.accuracy
+                ) +
+                " metres";
+
+        },
+
+        function(error) {
+
+            console.log(error);
+
+            if (error.code === 1) {
+
+                status.innerText =
+                    "❌ Location permission was denied.";
+
+            } else if (error.code === 2) {
+
+                status.innerText =
+                    "❌ Location could not be determined.";
+
+            } else if (error.code === 3) {
+
+                status.innerText =
+                    "❌ GPS request timed out.";
+
+            } else {
+
+                status.innerText =
+                    "❌ Unable to get GPS location.";
+
+            }
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+
+    );
+}
+
 function showPage(page) {
 
     document
@@ -962,7 +1111,18 @@ function captureImage() {
 
                 timestamp: timestamp,
 
-                duration: duration
+                duration: duration,
+
+                /* GPS ADDITION */
+
+                latitude:
+                    gpsLocation.latitude,
+
+                longitude:
+                    gpsLocation.longitude,
+
+                accuracy:
+                    gpsLocation.accuracy
 
             })
         }
@@ -1016,327 +1176,4 @@ function displayResults(data) {
     let html =
         "<div class='report'>" +
 
-        "<strong>❄️ SNOW AI REPORT</strong>" +
-
-        "<br><br>" +
-
-        "🕒 <strong>Timestamp:</strong><br>" +
-
-        (data.timestamp || "Unknown") +
-
-        "<br><br>" +
-
-        "⏱️ <strong>Duration:</strong><br>" +
-
-        (data.duration || "Unknown") +
-
-        " seconds" +
-
-        "<br><br>";
-
-    if (
-        !data.objects ||
-        data.objects.length === 0
-    ) {
-
-        html +=
-            "🔍 <strong>Detection:</strong><br>" +
-            "No objects detected.";
-
-    } else {
-
-        html +=
-            "🔍 <strong>Objects detected:</strong>";
-
-        data.objects.forEach(function(object) {
-
-            const name =
-                object.name || "Unknown";
-
-            const confidence =
-                object.confidence || "Unknown";
-
-            const description =
-                object.description ||
-                "No description available.";
-
-            const googleUrl =
-                object.google_url ||
-                "https://www.google.com/search?q="
-                + encodeURIComponent(name);
-
-            html +=
-
-                "<div class='detection'>" +
-
-                "🔹 <strong>" +
-                name +
-                "</strong><br>" +
-
-                "🎯 Confidence: " +
-
-                "<span class='confidence'>" +
-                confidence +
-                "</span><br>" +
-
-                "📚 " +
-                description +
-
-                "<br>" +
-
-                "<a class='search' " +
-                "href='" +
-                googleUrl +
-                "' " +
-                "target='_blank'>" +
-
-                "🔎 Search Google" +
-
-                "</a>" +
-
-                "</div>";
-
-        });
-
-    }
-
-    html += "</div>";
-
-    document
-        .getElementById("reportText")
-        .innerHTML = html;
-
-    status.innerText =
-        "🟢 Snow AI scan complete";
-
-    showPage("reports");
-}
-
-function stopScan() {
-
-    if (timer) {
-
-        clearInterval(timer);
-        timer = null;
-
-    }
-
-    stopCamera();
-
-    scanning = false;
-
-    resetButtons();
-
-    document
-        .getElementById("scanStatus")
-        .innerText =
-        "🟡 Scan stopped";
-}
-
-function stopCamera() {
-
-    if (stream) {
-
-        stream
-            .getTracks()
-            .forEach(function(track) {
-
-                track.stop();
-
-            });
-
-        stream = null;
-    }
-
-    const camera =
-        document.getElementById("camera");
-
-    camera.srcObject = null;
-    camera.style.display = "none";
-}
-
-function resetButtons() {
-
-    scanning = false;
-
-    const startButton =
-        document.getElementById("startButton");
-
-    const stopButton =
-        document.getElementById("stopButton");
-
-    startButton.disabled = false;
-    stopButton.disabled = true;
-}
-
-window.addEventListener(
-    "beforeunload",
-    function() {
-
-        if (timer) {
-
-            clearInterval(timer);
-
-        }
-
-        stopCamera();
-
-    }
-);
-
-</script>
-
-</body>
-
-</html>
-'''
-
-@app.route("/")
-def home():
-    return Response(HTML, mimetype="text/html")
-
-
-@app.route("/health")
-def health():
-    return jsonify({
-        "status": "online",
-        "service": "Force X",
-        "snow_ai": "connected"
-    })
-
-
-@app.route("/detect", methods=["POST"])
-def detect():
-
-    try:
-
-        data = request.get_json()
-
-        if not data or "image" not in data:
-
-            return jsonify({
-                "success": False,
-                "error": "No image received."
-            }), 400
-
-        image_data = data["image"]
-
-        if "," in image_data:
-
-            image_data = image_data.split(",", 1)[1]
-
-        image_bytes = b64decode(image_data)
-
-        array = np.frombuffer(
-            image_bytes,
-            dtype=np.uint8
-        )
-
-        image = cv2.imdecode(
-            array,
-            cv2.IMREAD_COLOR
-        )
-
-        if image is None:
-
-            return jsonify({
-                "success": False,
-                "error": "Invalid image."
-            }), 400
-
-        results = model(image)
-
-        objects = []
-
-        for result in results:
-
-            for box in result.boxes:
-
-                confidence = float(
-                    box.conf[0]
-                )
-
-                class_id = int(
-                    box.cls[0]
-                )
-
-                name = model.names[class_id]
-
-                description = object_info.get(
-                    name,
-                    "Snow AI detected this object."
-                )
-
-                google_url = (
-                    "https://www.google.com/search?q="
-                    + urllib.parse.quote(name)
-                )
-
-                objects.append({
-
-                    "name": name,
-
-                    "confidence":
-                        f"{confidence * 100:.1f}%",
-
-                    "description":
-                        description,
-
-                    "google_url":
-                        google_url
-                })
-
-        timestamp = data.get(
-            "timestamp",
-            datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-        )
-
-        duration = data.get(
-            "duration",
-            "Unknown"
-        )
-
-        return jsonify({
-
-            "success": True,
-
-            "timestamp":
-                timestamp,
-
-            "duration":
-                duration,
-
-            "objects":
-                objects
-
-        })
-
-    except Exception as error:
-
-        print("Detection error:", error)
-
-        return jsonify({
-
-            "success": False,
-
-            "error":
-                "Snow AI could not process the image."
-
-        }), 500
-
-
-if __name__ == "__main__":
-
-    port = int(
-        os.environ.get(
-            "PORT",
-            10000
-        )
-    )
-
-    app.run(
-        host="0.0.0.0",
-        port=port
-)
+        "<strong>❄️ SNOW AI RE
